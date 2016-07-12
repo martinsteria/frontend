@@ -40,7 +40,7 @@
 
     <div class="container">
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <h3>1. Velg Mal</h3>
       <p>Velg ønsket mal for din infrastruktur.</p>
       <p>
@@ -53,7 +53,7 @@
       <p></p>
     </div>
 	
-    <div class="col-sm-3">
+    <div class="col-sm-5">
       <h3>2. Rediger Variabler</h3>
       <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
       <p>
@@ -65,7 +65,7 @@
           <textarea id="leseText">Parameterfil</textarea> 
       </p>
         <p>
-            <button id="create">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
+            <button id="create" onclick="lagFil()">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
         </p>
         <p>
             <table style="width: 100%;">
@@ -92,7 +92,7 @@
         </p>
       
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-4">
       <h3>3. Rull ut</h3>
       <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
       <p>

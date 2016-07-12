@@ -1,11 +1,15 @@
-﻿document.getElementsByClassName('col-sm-3')[0].style.visibility = 'hidden';
-document.getElementsByClassName('col-sm-2')[0].style.visibility = 'hidden';
+﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() { 
     document.getElementById("demo").innerHTML = "Bolle!";
     
 
-    document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
-}
+    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+};
+
+function lagFil(){
+    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'visible';
+};
 
 (function () {
     var textFile = null,
