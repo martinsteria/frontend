@@ -1,4 +1,7 @@
 ﻿
+function velgMal() { 
+	document.getElementById("demo").innerHTML = "Bolle!";
+}
 
 (function () {
     var textFile = null,
@@ -50,4 +53,6 @@ $(document).ready(function () {
         });
     });
 });
+
+
 
