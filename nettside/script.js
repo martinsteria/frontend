@@ -1,6 +1,10 @@
-﻿
+﻿document.getElementsByClassName('col-sm-3')[0].style.visibility = 'hidden';
+document.getElementsByClassName('col-sm-2')[0].style.visibility = 'hidden';
 function velgMal() { 
-	document.getElementById("demo").innerHTML = "Bolle!";
+    document.getElementById("demo").innerHTML = "Bolle!";
+    
+
+    document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
 }
 
 (function () {
@@ -30,9 +34,11 @@ function velgMal() {
     }, false);
 })();
 
+
+
 $(document).ready(function () {
     $.ajaxSetup({cache: false})
-    $("#leseFil").click(function () {
+    $("#Button1").click(function () {
         $.getJSON('http://tfbrowser.routable.org/api', function (result) {
             console.log(result);
             //document.write(result.name); skriver første til hovedside etter "last inn"
