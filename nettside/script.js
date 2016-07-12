@@ -1,9 +1,37 @@
 ﻿document.getElementsByClassName('col-sm-3')[0].style.visibility = 'hidden';
 document.getElementsByClassName('col-sm-2')[0].style.visibility = 'hidden';
 function velgMal() { 
-    document.getElementById("demo").innerHTML = "Bolle!";
-    
-
+    document.getElementById("Mal").innerHTML = "Bolle!";
+    var e = document.getElementById("Select2");
+	var templateName = e.options[e.selectedIndex].text;
+	document.getElementById("Mal").innerHTML = templateName;
+	var templateId = e.options[e.selectedIndex].value;
+	document.getElementById("if").innerHTML = templateId;
+	if (templateId == "1") {
+		Milestone1();
+		document.getElementById("if").innerHTML = "Bolle!";
+	} else if (templateId =="2") {
+		    varName1 = "Variabel for milestone 2";
+            $("#innVarNavn1").html(varName1);
+            //$("#leseText").html(varName1);
+            varBesk1 = "Variabel for milestone 2";
+            $("#innBesk1").html(varBesk1);
+            varName2 = "Variabel for milestone 2";
+            $("#innVarNavn2").html(varName2);
+            varBesk2 = "Variabel for milestone 2";
+            $("#innBesk2").html(varBesk2);
+			varName3 = "Variabel for milestone 2";
+            $("#innVarNavn3").html(varName3);
+            varBesk3 = "Variabel for milestone 2";
+            $("#innBesk3").html(varBesk3);
+            varName4 = "Variabel for milestone 2";
+            $("#innVarNavn4").html(varName4);
+            varBesk4 = "Variabel for milestone 2";
+            $("#innBesk4").html(varBesk4);
+		document.getElementById("if").innerHTML = "Ikke Bolle!";
+	} else {
+		document.getElementById("if").innerHTML = "Mal finnes ikke";
+	}	
     document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
 }
 
@@ -35,17 +63,17 @@ function velgMal() {
 })();
 
 
-
+function Milestone1() {
 $(document).ready(function () {
     $.ajaxSetup({cache: false})
-    $("#Button1").click(function () {
+   /* $("#Button1").click(function () { */
         $.getJSON('http://tfbrowser.routable.org/api', function (result) {
             console.log(result);
             //document.write(result.name); skriver første til hovedside etter "last inn"
             // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
             
             varAll = result;
-                $("#leseText").html(varAll);
+            $("#leseText").html(varAll);
             
             varName1 = result.variables[0].name;
             $("#innVarNavn1").html(varName1);
@@ -57,6 +85,16 @@ $(document).ready(function () {
             $("#innVarNavn2").html(varName2);
             varBesk2 = result.variables[1].description;
             $("#innBesk2").html(varBesk2);
+			
+			varName2 = result.variables[2].name;
+            $("#innVarNavn3").html(varName2);
+            varBesk2 = result.variables[2].description;
+            $("#innBesk3").html(varBesk2);
+			
+			varName2 = result.variables[3].name;
+            $("#innVarNavn4").html(varName2);
+            varBesk2 = result.variables[3].description;
+            $("#innBesk4").html(varBesk2);
             
             //content = "";
             // content2 = "";
@@ -71,8 +109,8 @@ $(document).ready(function () {
               
             //});
         });
-    });
+    /*}); */
 });
 
-
+}
 
