@@ -1,7 +1,8 @@
-﻿document.getElementsByClassName('col-sm-3')[0].style.visibility = 'hidden';
-document.getElementsByClassName('col-sm-2')[0].style.visibility = 'hidden';
+﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() { 
-    document.getElementById("Mal").innerHTML = "Bolle!";
+    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+	document.getElementById("Mal").innerHTML = "Bolle!";
     var e = document.getElementById("Select2");
 	var templateName = e.options[e.selectedIndex].text;
 	document.getElementById("Mal").innerHTML = templateName;
@@ -33,7 +34,12 @@ function velgMal() {
 		document.getElementById("if").innerHTML = "Mal finnes ikke";
 	}	
     document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
-}
+};
+
+function lagFil(){
+    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'visible';
+};
+
 
 (function () {
     var textFile = null,
