@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title></title>
+	<meta charset="utf-8" />
+    <style type="text/css">
+        #Select1 {
+            height: 11px;
+            width: 213px;
+        }
+        #TextArea1 {
+            height: 75px;
+        }
+        .auto-style4 {
+            width: 90px;
+        }
+        .auto-style5 {
+            width: 90px;
+            height: 20px;
+        }
+        .auto-style6 {
+            width: 101px;
+        }
+    </style>
+    
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+    <div class="jumbotron text-center">
+      <h1>Cloud Solution</h1>
+      <p>Template Deployment</p>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>1. Velg Mal</h3>
+      <p>Velg ønsket mal for din infrastruktur.</p>
+      <p>
+          <select id="Select2" name="D2">
+            <option>Milestone 1</option>
+            <option>Milestone 2</option>
+        </select><input id="Button1" type="button" value="Velg" />
+      </p>
+      <p></p>
+    </div>
+    <div class="col-sm-4">
+      <h3>2. Rediger Variabler</h3>
+      <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
+      <p>
+        <div class="button">
+            <input type="button" id="leseFil" value="Last inn fil" />
+        </div>
+      </p>
+      <p>
+          <textarea id="leseText">Parameterfil</textarea> 
+      </p>
+        <p>
+            <button id="create">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
+        </p>
+        <p>
+            <table style="width: 100%;">
+                <tr>
+                    <td class="auto-style4">Variabelnavn</td>
+                    <td class="auto-style4">Beskrivelse</td>
+                    <td class="auto-style4">Verdi</td>
+                </tr>
+                <tr>
+                    <td class="auto-style5"></td>
+                    <td class="auto-style5">
+                        </td>
+                    <td class="auto-style5">
+                        <input id="Text1" class="auto-style6" type="text" /></td>
+                </tr>
+                <tr>
+                    <td class="auto-style4">&nbsp;</td>
+                    <td class="auto-style4">
+                        &nbsp;</td>
+                    <td class="auto-style4">
+                        <input id="Text2" class="auto-style6" type="text" /></td>
+                </tr>
+
+            </table>
+        </p>
+      
+    </div>
+    <div class="col-sm-4">
+      <h3>3. Rull ut</h3>
+      <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
+      <p>
+        <input id="Button2" type="button" value="Plan" />&nbsp;&nbsp;&nbsp;
+        <input id="Button3" type="button" value="Apply" />&nbsp;&nbsp;&nbsp;
+        <input id="Button4" type="button" value="Destroy" />
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<hr />
+
+
+
+
+        <script src="script.js"></script>
+
+    </body>
+</html>
