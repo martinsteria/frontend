@@ -32,9 +32,20 @@ $(document).ready(function () {
     $("#leseFil").click(function () {
         $.getJSON('http://tfbrowser.routable.org/api', function (result) {
             console.log(result);
-            //document.write(result.name); skriver til hovedside etter "last inn"
-            $("#leseText").write(result.name);
-          
+            //document.write(result.name); skriver første til hovedside etter "last inn"
+            // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
+            
+            varAll = result.variables.all;
+            $("#leseText").html(varAll);
+
+            varName1 = result.variables[0].name;
+            $("#innVarNavn1").html(varName1);
+            //$("#leseText").html(varName1);
+
+            varBesk1 = result.variables[0].description;
+            $("#innBesk1").html(varBesk1);
+            
+            
             //content = "";
             // content2 = "";
             // content += result.name + "\n";
