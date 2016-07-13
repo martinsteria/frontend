@@ -1,26 +1,22 @@
 ﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
 document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() {
+	//empty table "tabelVars"
 	var e = document.getElementById("Select2");
 	var templateName = e.options[e.selectedIndex].text;
 	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
 	var fil = document.getElementById("myFile");
-	if (fil.files.length == 0) {
-		if (templateId == "1") {
-			Milestone1();
-		} 
-		else if (templateId =="2") {
-				Milestone2();
-		} 
-		else {
-			document.getElementById("if").innerHTML = "Mal finnes ikke";
-		}
-	}
+	if (templateId == "1") {
+		Milestone1();
+	} 
+	else if (templateId =="2") {
+			Milestone2();
+	} 
 	else {
-	Fil();
+		document.getElementById("if").innerHTML = "Mal finnes ikke";
 	}
-    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
 };
 
 function lagFil() {
@@ -85,8 +81,16 @@ function lagArray() {
 
 function importModules() {
     $(document).ready(function () {
-
-    })
+        $.ajaxSetup({ cache: false })
+        $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules){
+            console.log(resultModules);
+            var content = ""
+            for (i = 0; i < resultModules.length; i++) {
+                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
+            }
+            $("#SelectTemplate").html(content);
+        });
+    });
 
 }
 
@@ -99,8 +103,7 @@ $(document).ready(function () {
             //document.write(result.name); skriver første til hovedside etter "last inn"
             // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
 
-            varAll = result;
-            $("#leseText").html(varAll);
+            
             varName1 = result.variables[0].name;
             $("#innVarNavn1").html(varName1);
             //$("#leseText").html(varName1);
@@ -134,7 +137,7 @@ function Milestone2(){
             $("#innVarNavn1").html(varName1);
             //$("#leseText").html(varName1);
             varBesk1 = "Variabel for milestone 2";
-            $("#innBesk1").html(varBesk1);
+            $("#innBesk1").html(varBesk1)
             varName2 = "Variabel for milestone 2";
             $("#innVarNavn2").html(varName2);
             varBesk2 = "Variabel for milestone 2";
@@ -148,8 +151,7 @@ function Milestone2(){
             varBesk4 = "Variabel for milestone 2";
             $("#innBesk4").html(varBesk4);
 }
-
-function Fil(){
+function printFil() {
 	var x = document.getElementById("myFile");
     var txt = "";
 	if ('files' in x) {
@@ -171,8 +173,21 @@ function Fil(){
         }
     } 
     document.getElementById("Fil").innerHTML = txt;
-		varName1 = "Fil";
-	$("#innVarNavn1").html(varName1);
-	varBesk1 = "Fil";
-	$("#innBesk1").html(varBesk1);
 }
+
+function velgFil(){
+	printFil();
+	var x = document.getElementById("myFile");
+	if ('files' in x) {
+		//filen heter nå "file"
+		var file = x.files[0];
+		//if (fil.files.length != 0) {
+			varName1 = "Fil";
+			$("#innVarNavn1").html(varName1);
+			varBesk1 = "Fil";
+			$("#innBesk1").html(varBesk1);
+		//}
+	}
+	else {document.getElementById("Fil").innerHTML = "Fil finnes ikke";}
+	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+	}
