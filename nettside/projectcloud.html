@@ -22,6 +22,10 @@
         .auto-style6 {
             width: 101px;
         }
+		table {
+			border-collapse: separate;
+			empty-cells: hide;
+		}
     </style>
     
 
@@ -52,7 +56,7 @@
 		<br>
 		<br>
 		<!--Knap for å laste inn en fil. Kan være en fil eller .zip-->
-		<input type="file" id="myFile" onchange="velgMal()" >
+		<input type="file" id="myFile" onchange="velgFil()" >
 		<br>
 		<p id="Fil"></p>
 		<p id="test"></p>
@@ -77,11 +81,14 @@
 
             
             <table style="width: 100%;">
+				<thead>
                 <tr>
-                    <td class="auto-style4">Variabelnavn</td>
-                    <td class="auto-style4">Beskrivelse</td>
-                    <td class="auto-style4">Verdi</td>
+                    <th class="auto-style4">Variabelnavn</th>
+                    <th class="auto-style4">Beskrivelse</th>
+                    <th class="auto-style4">Verdi</th>
                 </tr>
+				</thead>
+				<tbody>
                 <tr>
                     <td id ="innVarNavn1" class="auto-style5"></td>
                     <td id ="innBesk1" class="auto-style5"></td>
@@ -109,7 +116,7 @@
                         <input id="Var4Verdi" class="auto-style6" type="text" /></td>
                 </tr>
 
-
+			</tbody>
             </table>
                 <button id="create" onclick="lagFil();lagArray();">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
             </form>
