@@ -12,14 +12,14 @@ func main() {
 		return []byte("{}")
 	})
 
-	api.AddEndpoint("/api/modules", library.GetModuleNamesJSON)
+	api.AddEndpoint("/api/modules", library.GetModuleListJSON)
 
-	for _, m := range library.GetModuleNames() {
-		func(moduleName string) {
-			api.AddEndpoint("/api/modules/"+moduleName, func() []byte {
-				return library.GetModuleDocumentation(moduleName)
+	for _, v := range library.GetModuleIds() {
+		func(id string) {
+			api.AddEndpoint("/api/modules/"+id, func() []byte {
+				return library.GetModuleDocumentationJSON(id)
 			})
-		}(m)
+		}(v)
 	}
 
 	api.HandleRequests(os.Args[1])

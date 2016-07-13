@@ -20,23 +20,33 @@ func Init() {
 	l = buildLibrary()
 }
 
-func GetModuleNames() []string {
-	names := make([]string, len(l.Modules))
-	for i := range l.Modules {
-		names[i] = l.Modules[i].Name
+func GetModuleIds() []string {
+	var Ids []string
+	for _, m := range l.Modules {
+		Ids = append(Ids, m.Id)
 	}
-	return names
+	return Ids
 }
 
-func GetModuleNamesJSON() []byte {
-	namesJSON, _ := json.Marshal(GetModuleNames())
-	return namesJSON
+func GetModuleListJSON() []byte {
+	type module struct {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+	var ms []module
+
+	for _, m := range l.Modules {
+		ms = append(ms, module{m.Id, m.Name})
+	}
+
+	msJSON, _ := json.Marshal(ms)
+	return msJSON
 }
 
-func GetModuleDocumentation(name string) []byte {
+func GetModuleDocumentationJSON(id string) []byte {
 	var moduleJSON []byte
 	for _, m := range l.Modules {
-		if name == m.Name {
+		if id == m.Id {
 			moduleJSON, _ = json.Marshal(m)
 		}
 	}
