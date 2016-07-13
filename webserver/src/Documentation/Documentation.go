@@ -2,11 +2,10 @@ package Documentation
 
 import (
 	"bufio"
-	//"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"io/ioutil"
 )
 
 type variable struct {
@@ -22,14 +21,13 @@ type output struct {
 
 type Module struct {
 	Name        string     `json:"name"`
-	Id			string 	   `json:"id"`
+	Id          string     `json:"id"`
 	Description string     `json:"description"`
 	Variables   []variable `json:"variables"`
 	Outputs     []output   `json:"outputs"`
 }
 
 func BuildModule(path string) Module {
-
 	files, _ := ioutil.ReadDir(path)
 
 	var newModule Module
@@ -37,7 +35,7 @@ func BuildModule(path string) Module {
 	var outputs []output
 	add := false
 	for _, f := range files {
-		if (strings.Contains(f.Name(), ".tf") && !strings.Contains(f.Name(), ".tfvars")){
+		if strings.Contains(f.Name(), ".tf") && !strings.Contains(f.Name(), ".tfvars") {
 			file, err := os.Open(f.Name())
 			if err != nil {
 				log.Fatal(err)
@@ -117,7 +115,6 @@ func BuildModule(path string) Module {
 	newModule.Id = strings.Replace(newModule.Name, " ", "", -1)
 	newModule.Variables = variables
 	newModule.Outputs = outputs
-
 
 	return newModule
 }
