@@ -3,7 +3,6 @@ package library
 import (
 	"Documentation"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -21,22 +20,37 @@ func Init() {
 	l = buildLibrary()
 }
 
-func GetModuleNames() []string {
-	names := make([]string, len(l.Modules))
-	for i := range l.Modules {
-		names[i] = l.Modules[i].Name
+func GetModuleIds() []string {
+	var Ids []string
+	for _, m := range l.Modules {
+		Ids = append(Ids, m.Id)
 	}
-	return names
+	return Ids
 }
 
-func GetModuleNamesJSON() []byte {
-	namesJSON, _ := json.Marshal(GetModuleNames())
-	return namesJSON
+func GetModuleListJSON() []byte {
+	type module struct {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+	var ms []module
+
+	for _, m := range l.Modules {
+		ms = append(ms, module{m.Id, m.Name})
+	}
+
+	msJSON, _ := json.Marshal(ms)
+	return msJSON
 }
 
-func GetModuleDocumentation() []byte {
+func GetModuleDocumentationJSON(id string) []byte {
 	var moduleJSON []byte
-	moduleJSON, _ = json.Marshal(l.Modules[1])
+	for _, m := range l.Modules {
+		if id == m.Id {
+			moduleJSON, _ = json.Marshal(m)
+		}
+	}
+
 	return moduleJSON
 }
 
@@ -48,7 +62,7 @@ func buildLibrary() Library {
 	for _, f := range files {
 		lib.Modules = append(
 			lib.Modules,
-			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()+"/main.tf"))
+			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()))
 	}
 
 	return lib

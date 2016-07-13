@@ -43,13 +43,13 @@ function lagArray() {
         }
     ]
     };
-    console.log(obj)
 
     var json = JSON.stringify(obj);
 
     //alert(tabellVar11 + " = '" + tabellVar12 + "'\n" + tabellVar21 + " = '" + tabellVar22 + "'");
     alert(json);
-
+    document.getElementById('leseText').value = json;
+    
 }
 
 (function () {
@@ -79,6 +79,12 @@ function lagArray() {
     }, false);
 })();
 
+function importModules() {
+    $(document).ready(function () {
+
+    })
+
+}
 
 function Milestone1() {
 $(document).ready(function () {

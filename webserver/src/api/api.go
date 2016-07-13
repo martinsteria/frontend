@@ -4,37 +4,41 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 const (
 	staticBasePath = "/home/martin/go-web/webserver/static/"
 )
 
-type route struct {
+type endpoint struct {
 	Url      string
 	Function func() []byte
 }
 
-var routes []route
+var endpoints []endpoint
 
-func AddRoute(url string, function func() []byte) {
-	routes = append(routes, route{url, function})
+func AddEndpoint(url string, function func() []byte) {
+	endpoints = append(endpoints, endpoint{url, function})
 }
 
-func HandleRequests() {
+func HandleRequests(port string) {
 	fs := http.FileServer(http.Dir(staticBasePath))
 	http.Handle("/", fs)
 
-	for _, r := range routes {
-		go func(v route) {
-			http.HandleFunc(v.Url, func(w http.ResponseWriter, r *http.Request) {
+	for _, r := range endpoints {
+		go func(e endpoint) {
+			http.HandleFunc(e.Url, func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				n, err := w.Write(v.Function())
+				n, err := w.Write(e.Function())
+				fmt.Println(time.Now())
+				fmt.Println(string(e.Function()))
 				fmt.Println(n)
 				fmt.Println(err)
+				fmt.Print("\n")
 			})
 		}(r)
 	}
 
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
