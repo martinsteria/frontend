@@ -24,10 +24,13 @@ function lagFil() {
 };
 
 function lagArray() {
-    var verdiVar1 = document.getElementById("Var1Verdi").value;
-   
+    var tabellVar11 = document.getElementById("innVarNavn1").innerHTML;
+    var tabellVar12 = document.getElementById("Var1Verdi").value;
+ 
+    var tabellVar21 = document.getElementById("innVarNavn2").innerHTML;
+    var tabellVar22 = document.getElementById("Var2Verdi").value;
 
-    alert(verdiVar1);
+    alert(tabellVar11 + "= '" + tabellVar12 + "'\n" + tabellVar21 + "= '" + tabellVar22 + "'");
     //document.getElementById("test3").innerHTML = "Vellykket";
 }
 
