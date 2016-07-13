@@ -5,15 +5,22 @@ function velgMal() {
 	var templateName = e.options[e.selectedIndex].text;
 	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
-	if (templateId == "1") {
-		Milestone1();
-	} else if (templateId =="2") {
-			Milestone2();
-	} else {
-		document.getElementById("if").innerHTML = "Mal finnes ikke";
+	var fil = document.getElementById("myFile");
+	if (fil.files.length == 0) {
+		if (templateId == "1") {
+			Milestone1();
+		} 
+		else if (templateId =="2") {
+				Milestone2();
+		} 
+		else {
+			document.getElementById("if").innerHTML = "Mal finnes ikke";
+		}
+	}
+	else {
+	Fil();
 	}
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
-	
 };
 
 function lagFil() {
@@ -136,7 +143,7 @@ function Milestone2(){
             $("#innBesk4").html(varBesk4);
 }
 
-function LastOpp(){
+function Fil(){
 	var x = document.getElementById("myFile");
     var txt = "";
 	if ('files' in x) {
@@ -158,4 +165,8 @@ function LastOpp(){
         }
     } 
     document.getElementById("Fil").innerHTML = txt;
+		varName1 = "Fil";
+	$("#innVarNavn1").html(varName1);
+	varBesk1 = "Fil";
+	$("#innBesk1").html(varBesk1);
 }
