@@ -3,15 +3,12 @@ document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() {
 	var e = document.getElementById("Select2");
 	var templateName = e.options[e.selectedIndex].text;
-	document.getElementById("Mal").innerHTML = templateName;
+	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
-	document.getElementById("if").innerHTML = templateId;
 	if (templateId == "1") {
 		Milestone1();
-		document.getElementById("if").innerHTML = "Bolle!";
 	} else if (templateId =="2") {
 			Milestone2();
-			document.getElementById("if").innerHTML = "Ikke Bolle!";
 	} else {
 		document.getElementById("if").innerHTML = "Mal finnes ikke";
 	}
@@ -24,11 +21,32 @@ function lagFil() {
 };
 
 function lagArray() {
-    var verdiVar1 = document.getElementById("Var1Verdi").value;
-   
+    var tabellVar11 = document.getElementById("innVarNavn1").innerHTML;
+    var tabellVar12 = document.getElementById("Var1Verdi").value;
+ 
+    var tabellVar21 = document.getElementById("innVarNavn2").innerHTML;
+    var tabellVar22 = document.getElementById("Var2Verdi").value;
 
-    alert(verdiVar1);
-    //document.getElementById("test3").innerHTML = "Vellykket";
+    var $verdier = $('#innVarNavn1, #Var1Verdi ')
+    //var $verdier = $('#tabellVar11, #tabellVar12')
+    var obj = {values: [
+        {
+            name: tabellVar11,
+            value: tabellVar12
+        },
+        {
+            name: tabellVar21,
+            value: tabellVar22
+        }
+    ]
+    };
+    console.log(obj)
+
+    var json = JSON.stringify(obj);
+
+    //alert(tabellVar11 + " = '" + tabellVar12 + "'\n" + tabellVar21 + " = '" + tabellVar22 + "'");
+    alert(json);
+
 }
 
 (function () {
@@ -63,7 +81,7 @@ function Milestone1() {
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
  //   $("#Button1").click(function () {
-        $.getJSON('http://tfbrowser.routable.org/api', function (result) {
+        $.getJSON('http://tfbrowser.routable.org/api/modules/milestone-1', function (result) {
             console.log(result);
             //document.write(result.name); skriver første til hovedside etter "last inn"
             // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
