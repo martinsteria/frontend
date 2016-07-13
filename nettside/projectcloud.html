@@ -48,8 +48,13 @@
             <option value="1">Milestone 1</option>
             <option value="2">Milestone 2</option>
         </select><input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
-		<input type="file" id="myFile">
 		<p id="if"></p>
+		<br>
+		<br>
+		<!--Knap for å laste inn en fil. Kan være en fil eller .zip-->
+		<input type="file" id="myFile" onchange="LastOpp()" >
+		<br>
+		<p id="Fil"></p>
       </p>
       <p></p>
     </div>
