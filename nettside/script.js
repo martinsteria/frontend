@@ -11,6 +11,13 @@ function lagFil(){
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'visible';
 };
 
+function lagArray() {
+    var verdiVar1 = document.getElementById("Var1Verdi").value;
+    document.getElementById("test3").innerHTML = "Vellykket";
+    
+    alert(verdiVar1);
+}
+
 (function () {
     var textFile = null,
         makeTextFile = function (text) {
