@@ -3,15 +3,12 @@ document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() {
 	var e = document.getElementById("Select2");
 	var templateName = e.options[e.selectedIndex].text;
-	document.getElementById("Mal").innerHTML = templateName;
+	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
-	document.getElementById("if").innerHTML = templateId;
 	if (templateId == "1") {
 		Milestone1();
-		document.getElementById("if").innerHTML = "Bolle!";
 	} else if (templateId =="2") {
 			Milestone2();
-			document.getElementById("if").innerHTML = "Ikke Bolle!";
 	} else {
 		document.getElementById("if").innerHTML = "Mal finnes ikke";
 	}
