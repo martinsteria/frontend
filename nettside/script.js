@@ -12,10 +12,11 @@ function lagFil() {
 };
 
 function lagArray() {
-    var verdiVar1 = document.getElementById("Var1Verdi");
-    document.getElementById("test3").innerHTML = "Vellykket";
+    var verdiVar1 = document.getElementById("Var1Verdi").value;
+   
 
     alert(verdiVar1);
+    //document.getElementById("test3").innerHTML = "Vellykket";
 }
 
 (function () {
