@@ -3,11 +3,16 @@ package library
 import (
 	"Documentation"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"os/exec"
+	"time"
 )
 
 const (
-	libraryRootFolder = "/home/martin/terraform/martin"
+	libraryURL        = "https://github.com/martinsteria/library"
+	libraryRootFolder = "/home/martin/library"
 )
 
 type Library struct {
@@ -17,7 +22,44 @@ type Library struct {
 var l Library
 
 func Init() {
-	l = buildLibrary()
+	l = updateLibrary()
+	go libraryUpdater()
+
+	fmt.Println("Library initialized successfully")
+}
+
+func libraryUpdater() {
+	for {
+		time.Sleep(24 * time.Hour)
+
+		//UNSAFE: Trouble if someone accesses the library during the update
+		l = updateLibrary()
+	}
+}
+
+func updateLibrary() Library {
+	currentPath, _ := os.Getwd()
+	err := os.Chdir(libraryRootFolder)
+
+	if err != nil {
+		cloneLibrary()
+		os.Chdir(currentPath)
+	} else {
+		pullLibrary()
+	}
+	os.Chdir(currentPath)
+
+	return buildLibrary()
+}
+
+func cloneLibrary() {
+	out, _ := exec.Command("git", "clone", libraryURL, libraryRootFolder).CombinedOutput()
+	fmt.Println(string(out))
+}
+
+func pullLibrary() {
+	out, _ := exec.Command("git", "pull", "origin", "master").CombinedOutput()
+	fmt.Println(string(out))
 }
 
 func GetModuleIds() []string {
