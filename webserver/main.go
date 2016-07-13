@@ -2,19 +2,25 @@ package main
 
 import (
 	"api"
-	"fmt"
 	"library"
+	"os"
 )
 
 func main() {
 	library.Init()
-	api.AddRoute("/api", func() []byte {
+	api.AddEndpoint("/api", func() []byte {
 		return []byte("{}")
 	})
-	api.AddRoute("/api/modules", library.GetModuleNamesJSON)
+
+	api.AddEndpoint("/api/modules", library.GetModuleNamesJSON)
+
 	for _, m := range library.GetModuleNames() {
-		fmt.Println("/api/modules/" + m)
-		api.AddRoute("/api/modules/"+m, library.GetModuleDocumentation)
+		func(moduleName string) {
+			api.AddEndpoint("/api/modules/"+moduleName, func() []byte {
+				return library.GetModuleDocumentation(moduleName)
+			})
+		}(m)
 	}
-	api.HandleRequests()
+
+	api.HandleRequests(os.Args[1])
 }

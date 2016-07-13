@@ -2,7 +2,6 @@ package Documentation
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -27,7 +26,6 @@ type Module struct {
 }
 
 func BuildModule(filepath string) Module {
-	fmt.Println(filepath)
 	file, err := os.Open(filepath)
 	if err != nil {
 		log.Fatal(err)

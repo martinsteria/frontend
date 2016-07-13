@@ -3,7 +3,6 @@ package library
 import (
 	"Documentation"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -34,9 +33,14 @@ func GetModuleNamesJSON() []byte {
 	return namesJSON
 }
 
-func GetModuleDocumentation() []byte {
+func GetModuleDocumentation(name string) []byte {
 	var moduleJSON []byte
-	moduleJSON, _ = json.Marshal(l.Modules[1])
+	for _, m := range l.Modules {
+		if name == m.Name {
+			moduleJSON, _ = json.Marshal(m)
+		}
+	}
+
 	return moduleJSON
 }
 
@@ -46,13 +50,10 @@ func buildLibrary() Library {
 	files, _ := ioutil.ReadDir(libraryRootFolder + "/modules")
 
 	for _, f := range files {
-		fmt.Print("\n\n\n")
 		lib.Modules = append(
 			lib.Modules,
 			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()+"/main.tf"))
 	}
-
-	fmt.Println(lib)
 
 	return lib
 }
