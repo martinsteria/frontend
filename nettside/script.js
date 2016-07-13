@@ -1,7 +1,7 @@
 ﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
 document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() {
-    document.getElementById("demo").innerHTML = "Bolle!";
+   // document.getElementById("demo").innerHTML = "Bolle!";
 
 
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
