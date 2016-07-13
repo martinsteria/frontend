@@ -1,21 +1,20 @@
 package main
 
 import (
+	"api"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
+	"library"
 )
 
 func main() {
-	http.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		b, _ := ioutil.ReadFile("mockTerraform.json")
-		fmt.Fprintf(w, string(b))
+	library.Init()
+	api.AddRoute("/api", func() []byte {
+		return []byte("{}")
 	})
-
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/", fs)
-
-	log.Fatal(http.ListenAndServe(":80", nil))
+	api.AddRoute("/api/modules", library.GetModuleNamesJSON)
+	for _, m := range library.GetModuleNames() {
+		fmt.Println("/api/modules/" + m)
+		api.AddRoute("/api/modules/"+m, library.GetModuleDocumentation)
+	}
+	api.HandleRequests()
 }
