@@ -85,8 +85,16 @@ function lagArray() {
 
 function importModules() {
     $(document).ready(function () {
-
-    })
+        $.ajaxSetup({ cache: false })
+        $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules){
+            console.log(resultModules);
+            var content = ""
+            for (i = 0; i < resultModules.length; i++) {
+                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
+            }
+            $("#SelectTemplate").html(content);
+        });
+    });
 
 }
 
@@ -99,8 +107,7 @@ $(document).ready(function () {
             //document.write(result.name); skriver første til hovedside etter "last inn"
             // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
 
-            varAll = result;
-            $("#leseText").html(varAll);
+            
             varName1 = result.variables[0].name;
             $("#innVarNavn1").html(varName1);
             //$("#leseText").html(varName1);

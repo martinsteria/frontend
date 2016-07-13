@@ -65,12 +65,16 @@
       <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
       <p>
         <div class="button">
-            <input type="button" id="leseFil" value="Last inn fil" />
+            <input type="button" id="leseFil" value="Last inn fil" onclick ="importModules()"/>
         </div>
       </p>
       <p>
           <textarea id="leseText">Parameterfil</textarea> 
       </p>
+        <select id="SelectTemplate" name= "ST">
+                <option value="1" id ="innModule1">Test</option>
+                <option value="2">Milestone 2</option>
+        </select>
         
         
             <form id ="tabelVars" onsubmit="return false">
