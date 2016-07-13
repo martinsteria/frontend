@@ -1,7 +1,7 @@
 # AzureRM Network Interface
 
-/**
-This module creates 'n' network interfaces for the Azure cloud.
+/*
+Module Description = This module creates 'n' network interfaces for the Azure cloud.
 */
 
 variable "resourceGroupName" {
@@ -38,9 +38,10 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-/**
-String of IDs separated by commas.
-*/
+
 output "idSplat" {
+  /*
+Output Description = String of IDs separated by commas.
+*/
   value = "${join(",", azurerm_network_interface.nic.*.id)}"
 }

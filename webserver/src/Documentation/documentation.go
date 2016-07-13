@@ -7,6 +7,7 @@ import (
 	"log"
 	"bufio"
 	"strings"
+	"io/ioutil"
 )
 
 type variable struct {
@@ -58,8 +59,8 @@ func BuildModule() module  {
 		} else if (strings.Contains(line, "variable")) {
 			line = strings.Trim(line, "variable { ")
 			line = strings.Trim(line, "\"")
+			
 			var temp_variable variable
-
 			temp_variable.Name = line
 			for {
 				if strings.Contains(scanner.Text(), "}") {
@@ -69,8 +70,7 @@ func BuildModule() module  {
 				line = scanner.Text()
 				if(strings.Contains(line, "default")){
 					temp_variable.DefaultValue = strings.Trim(line, "default = \"")
-				}
-				if(strings.Contains(line, "description")){
+				} else if(strings.Contains(line, "description")){
 					line = strings.Trim(line, " description = ")
 					temp_variable.Description = strings.Trim(line, "\"")
 				}
@@ -86,19 +86,13 @@ func BuildModule() module  {
 				if strings.Contains(scanner.Text(), "}") || strings.Contains(scanner.Text(), "*/") {
 					add = false
 					break
-				}
-
-				if add {
+				} else if add {
 					temp_output.Description += strings.Trim(scanner.Text(), "Output Description = ")
-				}
-
-				if strings.Contains(scanner.Text(), "Output Description"){
+				} else if strings.Contains(scanner.Text(), "Output Description"){
 					add = true
 					temp_output.Description += scanner.Text()
 				}
-
 				scanner.Scan()	
-
 			}
 
 			outputs = append(outputs, temp_output)
@@ -113,15 +107,6 @@ func BuildModule() module  {
 	newModule.Variables = variables
 	newModule.Outputs = outputs
 
-	fmt.Println(newModule.Name)
-	fmt.Println()
-	fmt.Println(newModule.Description)
-	fmt.Println()
-	fmt.Println(newModule.Variables)
-	fmt.Println()
-	fmt.Println(newModule.Outputs)
-
-
 	err = file.Close()
 	if  err != nil {
 		log.Fatal(err)
@@ -130,3 +115,17 @@ func BuildModule() module  {
 	return newModule
 }
 
+
+
+func Test(){
+	
+	file,err:= ioutil.ReadFile("test.tf")
+	//fmt.Printf("%s", file)
+	s := string(file[:])
+	//s = strings.Fields(s)
+	fmt.Printf(s)
+
+	if  err != nil {
+		log.Fatal(err)
+	}
+}
