@@ -1,5 +1,4 @@
-package Documentation
-
+package doc
 import (
 	"bufio"
 	"io/ioutil"
