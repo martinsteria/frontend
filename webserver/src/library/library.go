@@ -1,7 +1,7 @@
 package library
 
 import (
-	"Documentation"
+	"doc"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,7 +16,7 @@ const (
 )
 
 type Library struct {
-	Modules []Documentation.Module
+	Modules []doc.Module
 }
 
 var l Library
@@ -104,7 +104,7 @@ func buildLibrary() Library {
 	for _, f := range files {
 		lib.Modules = append(
 			lib.Modules,
-			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()))
+			doc.BuildModule(libraryRootFolder+"/modules/"+f.Name()))
 	}
 
 	return lib
