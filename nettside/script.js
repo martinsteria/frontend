@@ -27,8 +27,26 @@ function lagArray() {
     var tabellVar21 = document.getElementById("innVarNavn2").innerHTML;
     var tabellVar22 = document.getElementById("Var2Verdi").value;
 
-    alert(tabellVar11 + " = '" + tabellVar12 + "'\n" + tabellVar21 + " = '" + tabellVar22 + "'");
-    //document.getElementById("test3").innerHTML = "Vellykket";
+    var $verdier = $('#innVarNavn1, #Var1Verdi ')
+    //var $verdier = $('#tabellVar11, #tabellVar12')
+    var obj = {values: [
+        {
+            name: tabellVar11,
+            value: tabellVar12
+        },
+        {
+            name: tabellVar21,
+            value: tabellVar22
+        }
+    ]
+    };
+    console.log(obj)
+
+    var json = JSON.stringify(obj);
+
+    //alert(tabellVar11 + " = '" + tabellVar12 + "'\n" + tabellVar21 + " = '" + tabellVar22 + "'");
+    alert(json);
+
 }
 
 (function () {

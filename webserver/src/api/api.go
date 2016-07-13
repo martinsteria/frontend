@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	apiBaseURL     = "/api"
 	staticBasePath = "/home/martin/go-web/webserver/static/"
 )
 

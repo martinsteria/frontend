@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	libraryRootFolder = "/home/martin/mockLib/"
+	libraryRootFolder = "/home/martin/terraform/martin"
 )
 
 type Library struct {
@@ -46,13 +46,10 @@ func buildLibrary() Library {
 	files, _ := ioutil.ReadDir(libraryRootFolder + "/modules")
 
 	for _, f := range files {
-		fmt.Print("\n\n\n")
 		lib.Modules = append(
 			lib.Modules,
 			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()+"/main.tf"))
 	}
-
-	fmt.Println(lib)
 
 	return lib
 }
