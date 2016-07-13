@@ -32,7 +32,23 @@ type Library struct {
 	Modules []module
 }
 
-func ParseModulesFromLibraryMock() Library {
+var l Library
+
+func Init() {
+	l = parseModulesFromFilesMock()
+}
+
+func GetModuleNames() []byte {
+	names := make([]string, len(l.Modules))
+	for i := range l.Modules {
+		names[i] = l.Modules[i].Name
+	}
+	namesJSON, _ := json.Marshal(names)
+
+	return namesJSON
+}
+
+func parseModulesFromFilesMock() Library {
 	var lib Library
 	lib.Modules = make([]module, 1)
 
@@ -43,13 +59,4 @@ func ParseModulesFromLibraryMock() Library {
 	}
 
 	return lib
-}
-
-func (l *Library) GetModuleNames() []string {
-	names := make([]string, len(l.Modules))
-	for i := range l.Modules {
-		names[i] = l.Modules[i].Name
-	}
-
-	return names
 }
