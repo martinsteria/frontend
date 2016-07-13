@@ -5,15 +5,22 @@ function velgMal() {
 	var templateName = e.options[e.selectedIndex].text;
 	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
-	if (templateId == "1") {
-		Milestone1();
-	} else if (templateId =="2") {
-			Milestone2();
-	} else {
-		document.getElementById("if").innerHTML = "Mal finnes ikke";
+	var fil = document.getElementById("myFile");
+	if (fil.files.length == 0) {
+		if (templateId == "1") {
+			Milestone1();
+		} 
+		else if (templateId =="2") {
+				Milestone2();
+		} 
+		else {
+			document.getElementById("if").innerHTML = "Mal finnes ikke";
+		}
+	}
+	else {
+	Fil();
 	}
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
-	
 };
 
 function lagFil() {
@@ -140,4 +147,32 @@ function Milestone2(){
             $("#innVarNavn4").html(varName4);
             varBesk4 = "Variabel for milestone 2";
             $("#innBesk4").html(varBesk4);
+}
+
+function Fil(){
+	var x = document.getElementById("myFile");
+    var txt = "";
+	if ('files' in x) {
+	//filen heter nå "file"
+	var file = x.files[0];
+	if ('name' in file) {
+		txt += "name: " + file.name + "<br>";
+		}
+	if ('size' in file) {
+		txt += "size: " + file.size + " bytes <br>";
+		}
+	}
+    else {
+        if (x.value == "") {
+            txt += "Select a file";
+        } else {
+            txt += "The files property is not supported by your browser!";
+            txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+        }
+    } 
+    document.getElementById("Fil").innerHTML = txt;
+		varName1 = "Fil";
+	$("#innVarNavn1").html(varName1);
+	varBesk1 = "Fil";
+	$("#innBesk1").html(varBesk1);
 }
