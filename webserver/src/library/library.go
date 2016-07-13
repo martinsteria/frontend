@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	libraryRootFolder = "/home/martin/mockLib/"
+	libraryRootFolder = "/home/martin/terraform/martin"
 )
 
 type Library struct {
@@ -62,7 +62,7 @@ func buildLibrary() Library {
 	for _, f := range files {
 		lib.Modules = append(
 			lib.Modules,
-			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()+"/main.tf"))
+			Documentation.BuildModule(libraryRootFolder+"/modules/"+f.Name()))
 	}
 
 	return lib

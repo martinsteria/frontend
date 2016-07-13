@@ -35,8 +35,10 @@ func BuildModule(path string) Module {
 	var outputs []output
 	add := false
 	for _, f := range files {
-		if strings.Contains(f.Name(), ".tf") && !strings.Contains(f.Name(), ".tfvars") {
-			file, err := os.Open(f.Name())
+		if strings.Contains(f.Name(), ".tf") &&
+			!strings.Contains(f.Name(), ".tfvars") &&
+			!strings.Contains(f.Name(), ".tfstate") {
+			file, err := os.Open(path + "/" + f.Name())
 
 			if err != nil {
 				log.Fatal(err)
@@ -49,6 +51,7 @@ func BuildModule(path string) Module {
 				if strings.Contains(line, "#") {
 					line = strings.Replace(line, "#", "", -1)
 					newModule.Name = strings.TrimSpace(line)
+
 				} else if strings.Contains(line, "Module Description") {
 					line := strings.Replace(line, "Module Description = ", "", -1)
 					for {
@@ -81,7 +84,7 @@ func BuildModule(path string) Module {
 							line = strings.Replace(line, "default =", "", -1)
 							temp_variable.DefaultValue = strings.TrimSpace(line)
 						} else if strings.Contains(line, "description") {
-							line = strings.Replace(line, "description =", "", -1)						
+							line = strings.Replace(line, "description =", "", -1)
 							temp_variable.Description = strings.TrimSpace(line)
 						}
 					}
