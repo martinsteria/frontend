@@ -30,7 +30,7 @@ function lagArray() {
     var tabellVar21 = document.getElementById("innVarNavn2").innerHTML;
     var tabellVar22 = document.getElementById("Var2Verdi").value;
 
-    alert(tabellVar11 + "= '" + tabellVar12 + "'\n" + tabellVar21 + "= '" + tabellVar22 + "'");
+    alert(tabellVar11 + " = '" + tabellVar12 + "'\n" + tabellVar21 + " = '" + tabellVar22 + "'");
     //document.getElementById("test3").innerHTML = "Vellykket";
 }
 
@@ -66,7 +66,7 @@ function Milestone1() {
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
  //   $("#Button1").click(function () {
-        $.getJSON('http://tfbrowser.routable.org/api', function (result) {
+        $.getJSON('http://tfbrowser.routable.org/api/modules/milestone-1', function (result) {
             console.log(result);
             //document.write(result.name); skriver første til hovedside etter "last inn"
             // $("#leseText").html(result.name); skriver første navnet til textarea etter last inn
