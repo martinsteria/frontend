@@ -48,10 +48,17 @@
       <h3>1. Velg Mal</h3>
       <p>Velg ønsket mal for din infrastruktur.</p>
       <p>
-          <select id="Select2" name="D2">
+          <!--<select id="Select2" name="D2">
             <option value="1">Milestone 1</option>
+            <option value="2">Milestone 2</option> 
+        </select> -->
+
+        <select id="SelectTemplate" name= "ST">
+            <option value="1" id ="innModule1">Test</option>
             <option value="2">Milestone 2</option>
-        </select><input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
+        </select>
+              
+              <input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
 		<p id="if"></p>
 		<br>
 		<br>
@@ -75,10 +82,7 @@
       <p>
           <textarea id="leseText">Parameterfil</textarea> 
       </p>
-        <select id="SelectTemplate" name= "ST">
-                <option value="1" id ="innModule1">Test</option>
-                <option value="2">Milestone 2</option>
-        </select>
+
         
         
             <form id ="tabelVars" onsubmit="return false">

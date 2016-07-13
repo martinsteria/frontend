@@ -1,4 +1,7 @@
-﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+﻿importModules();
+
+
+document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
 document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 function velgMal() {
 	//empty table "tabelVars"
@@ -93,7 +96,9 @@ function importModules() {
     });
 
 }
-
+$(document).ready(function () {
+    importModules();
+})
 function Milestone1() {
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
