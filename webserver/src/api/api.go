@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	staticBasePath = "/home/martin/frontend/webserver/static/"
+	staticBasePath = "/home/martin/frontend/nettside/"
 )
 
 type RequestData struct {
