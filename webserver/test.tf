@@ -4,6 +4,14 @@
 Module Description = This module creates 'n' network interfaces for the Azure cloud.
 */
 
+
+provider "aws" {
+    access_key = "${var.access_key}"
+    secret_key = "${var.secret_key}"
+    region = "${var.region}"
+}
+
+
 variable "resourceGroupName" {
   description = "The name of the resource group containing the NIC"
 }
@@ -31,10 +39,10 @@ resource "azurerm_network_interface" "nic" {
   count = "${var.count}"
   name = "${var.name}-${count.index}"
   ip_configuration {
-    name = "${var.name}-${count.index}-ipconfig"
-    subnet_id = "${var.subnetID}"
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = "${var.publicIPAddressID}"
+  name = "${var.name}-${count.index}-ipconfig"
+  subnet_id = "${var.subnetID}"
+  private_ip_address_allocation = "Dynamic"
+  public_ip_address_id = "${var.publicIPAddressID}"
   }
 }
 
