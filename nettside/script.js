@@ -5,15 +5,48 @@
 	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
+var modules = "http://tfbrowser.routable.org/api/modules"
+
 function importModules() {
     $.ajaxSetup({ cache: false })
-    $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
+    $.getJSON(modules, function (resultModules) {
         console.log(resultModules);
         var content = ""
         for (i = 0; i < resultModules.length; i++) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
         $("#SelectTemplate").html(content);
+        for (i = 0; i < resultModules.length; i++) {
+            (function (index) {
+                //$("#" + resultModules[index].id).change(function () {
+                    $.getJSON(modules + "/" + resultModules[index].id, function (result) {
+                        console.log(result)
+                        var myTable = ""
+
+
+                        myTable += '<tr>'
+                        myTable += '<th>' + 'VariabelNavn' + '</th>'
+                        myTable += '<th>' + 'Beskrivelse' + '</th>'
+                        myTable += '<th>' + 'Verdi' + '</th>'
+                        myTable += '</tr>'
+                        for (i = 0; i < result.variables.length; i++) {
+                            //var tooltip = result.variables[i].description
+                            var textInputBox = '<input type="text" id="' + [i] + '"name="' + [i] + '" />';
+                            myTable += '<tr>'
+                            myTable += '<td>' + result.variables[i].name + '</td>'
+                            myTable += '<td>' + result.variables[i].description + '</td>'
+                            myTable += '<td>' + textInputBox + '</td>'
+                            myTable += '</tr>'
+
+                        }
+                        $("#variablesTable").html(myTable)
+                        //$("#variablesTable").html(variableList)
+
+
+                    })
+               // })
+            })(i)
+        }
     });
 }
 
@@ -218,3 +251,8 @@ function velgFil(){
 	else {document.getElementById("Fil").innerHTML = "Fil finnes ikke";}
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
 	}
+
+function loggInn() {
+
+    location.href = "projectcloud.html"
+}

@@ -58,10 +58,10 @@
 
     <div class="container">
     <div class="row">
-    <div class="col-sm-3" id ="container1">
+    <div class="col-sm-3" id ="container1" >
         <h3>1. Velg Mal</h3>
         <p>Velg ønsket mal for din infrastruktur.</p>
-        <select id="SelectTemplate" name= "ST" onchange="ShowDescription();velgMal()" ></select> 
+        <select id="SelectTemplate" multiple ="multiple" name= "ST" onchange="ShowDescription();velgMal();importModules()" ></select> 
         <input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" />
 	    <p id="if"></p>
 	    <br>
@@ -77,10 +77,12 @@
     <div class="col-sm-5" id ="container2">
         <h3>2. Rediger Variabler</h3>
         <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
-        <div class="button">
+     <!--   <div class="button">
             <input type="button" id="leseFil" value="Last inn fil" onclick ="importModules()"/>
         </div>
         <textarea id="leseText">Parameterfil</textarea> 
+
+        
         <form id ="tabelVars" onsubmit="return false">
             <table style="width: 100%;">
 				<thead>
@@ -120,8 +122,10 @@
 
 			</tbody>
             </table>
+            </form> -->
+
             <button id="create" onclick="lagFil();lagArray();">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
-            </form>
+            
 
         <table id ="variablesTable"></table>
 
@@ -141,10 +145,6 @@
 
 
 <hr />
-
-
-
-
         <script src="script.js"></script>
 
     </body>
