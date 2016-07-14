@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	staticBasePath = "/home/martin/go-web/webserver/static/"
+	staticBasePath = "/home/martin/frontend/nettside/"
 )
 
 type RequestData struct {
