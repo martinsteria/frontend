@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     importModules();
+	importExisting()
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
@@ -50,6 +51,19 @@ function importModules() {
     });
 }
 
+
+function importExisting() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
+        console.log(resultModules);
+        var content = ""
+        for (i = 0; i < resultModules.length; i++) {
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + "Existing" + resultModules[i].name + "</option>"
+        }
+        $("#Existing").html(content);
+    });
+}
+
 function importVariables() {
     $.ajaxSetup({ cache: false })
     $.getJSON()
@@ -69,15 +83,24 @@ function ShowDescription(){
 	});
 }
 
+function ShowDescriptionE(){
+	$.ajaxSetup({ cache: false })
+    $.getJSON('http://tfbrowser.routable.org/api/modules', function (result) {
+		console.log(result);
+        var content = ""
+		var i = document.getElementById("Existing").value;
+		content += "<span>" + result[i].id + "</span><br>" + result[i].description 
+		document.getElementById("Description").innerHTML =  content;
+		document.getElementsByClassName('alert-box notice')[0].style.visibility = 'visible';
+	});
+}
 
 
 function velgMal() {
 	//empty table "tabelVars"
     var e = document.getElementById("SelectTemplate");
 	var templateName = e.options[e.selectedIndex].text;
-	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
-	var fil = document.getElementById("myFile");
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
 
 	console.log(templateName);
@@ -89,7 +112,28 @@ function velgMal() {
 			Milestone2();
 	} 
 	else {
-	    document.getElementById("if").innerHTML = "Mal finnes ikke";
+	    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+	    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+	}
+
+};
+
+function velgMalE() {
+	//empty table "tabelVars"
+    var e = document.getElementById("Existing");
+	var templateName = e.options[e.selectedIndex].text;
+	var templateId = e.options[e.selectedIndex].value;
+	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+
+	console.log(templateName);
+	if (templateName == "Existingmilestone-1") {
+	    Milestone1();
+        
+	} 
+	else if (templateName =="Existingmilestone-2") {
+			Milestone2();
+	} 
+	else {
 	    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
 	    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	}
@@ -211,6 +255,7 @@ function Milestone2(){
             varBesk4 = "Variabel for milestone 2";
             $("#innBesk4").html(varBesk4);
 }
+/*
 function printFil() {
 	var x = document.getElementById("myFile");
     var txt = "";
@@ -252,7 +297,9 @@ function velgFil(){
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
 	}
 
+    */
 function loggInn() {
 
     location.href = "projectcloud.html"
 }
+
