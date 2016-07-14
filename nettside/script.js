@@ -4,6 +4,18 @@
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 })
 
+function importModules() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
+        console.log(resultModules);
+        var content = ""
+        for (i = 0; i < resultModules.length; i++) {
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
+        }
+        $("#SelectTemplate").html(content);
+    });
+}
+
 
 function velgMal() {
 	//empty table "tabelVars"
@@ -90,23 +102,10 @@ function lagArray() {
     }, false);
 })();
 
-function importModules() {
-    $(document).ready(function () {
-        $.ajaxSetup({ cache: false })
-        $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules){
-            console.log(resultModules);
-            var content = ""
-            for (i = 0; i < resultModules.length; i++) {
-                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
-            }
-            $("#SelectTemplate").html(content);
-        });
-    });
 
-}
 
 function Milestone1() {
-$(document).ready(function () {
+
     $.ajaxSetup({ cache: false })
  //   $("#Button1").click(function () {
         $.getJSON('http://tfbrowser.routable.org/api/modules/milestone-1', function (result) {
@@ -136,10 +135,8 @@ $(document).ready(function () {
             // $.each(result, function (i, field) {
             //      $("#leseText").append(field + " ");
 
-            //});
-        });
-   // });
-});
+
+    });
 }
 
 function Milestone2(){
