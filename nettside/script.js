@@ -1,22 +1,45 @@
-﻿document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+﻿$(document).ready(function () {
+    importModules();
+    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+})
+
+function importModules() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
+        console.log(resultModules);
+        var content = ""
+        for (i = 0; i < resultModules.length; i++) {
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
+        }
+        $("#SelectTemplate").html(content);
+    });
+}
+
+
 function velgMal() {
 	//empty table "tabelVars"
-	var e = document.getElementById("Select2");
+    var e = document.getElementById("SelectTemplate");
 	var templateName = e.options[e.selectedIndex].text;
 	document.getElementById("if").innerHTML = templateName;
 	var templateId = e.options[e.selectedIndex].value;
 	var fil = document.getElementById("myFile");
-	if (templateId == "1") {
-		Milestone1();
+	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+
+	console.log(templateName);
+	if (templateName == "milestone-1") {
+	    Milestone1();
+        
 	} 
-	else if (templateId =="2") {
+	else if (templateName =="milestone-2") {
 			Milestone2();
 	} 
 	else {
-		document.getElementById("if").innerHTML = "Mal finnes ikke";
+	    document.getElementById("if").innerHTML = "Mal finnes ikke";
+	    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+	    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	}
-document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
+
 };
 
 function lagFil() {
@@ -79,23 +102,10 @@ function lagArray() {
     }, false);
 })();
 
-function importModules() {
-    $(document).ready(function () {
-        $.ajaxSetup({ cache: false })
-        $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules){
-            console.log(resultModules);
-            var content = ""
-            for (i = 0; i < resultModules.length; i++) {
-                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
-            }
-            $("#SelectTemplate").html(content);
-        });
-    });
 
-}
 
 function Milestone1() {
-$(document).ready(function () {
+
     $.ajaxSetup({ cache: false })
  //   $("#Button1").click(function () {
         $.getJSON('http://tfbrowser.routable.org/api/modules/milestone-1', function (result) {
@@ -125,10 +135,8 @@ $(document).ready(function () {
             // $.each(result, function (i, field) {
             //      $("#leseText").append(field + " ");
 
-            //});
-        });
-   // });
-});
+
+    });
 }
 
 function Milestone2(){

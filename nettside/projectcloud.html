@@ -43,47 +43,30 @@
     </div>
 
     <div class="container">
-  <div class="row">
-    <div class="col-sm-3">
-      <h3>1. Velg Mal</h3>
-      <p>Velg ønsket mal for din infrastruktur.</p>
-      <p>
-          <select id="Select2" name="D2">
-            <option value="1">Milestone 1</option>
-            <option value="2">Milestone 2</option>
-        </select><input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
-		<p id="if"></p>
-		<br>
-		<br>
-		<!--Knap for å laste inn en fil. Kan være en fil eller .zip-->
-		<input type="file" id="myFile" onchange="velgFil()" >
-		<br>
-		<p id="Fil"></p>
-		<p id="test"></p>
-      </p>
-      <p></p>
+    <div class="row">
+    <div class="col-sm-3" id ="container1">
+        <h3>1. Velg Mal</h3>
+        <p>Velg ønsket mal for din infrastruktur.</p>
+        <select id="SelectTemplate" name= "ST"></select> 
+        <input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
+	    <p id="if"></p>
+	    <br>
+	    <br>
+	    <!--Knap for å laste inn en fil. Kan være en fil eller .zip-->
+	    <input type="file" id="myFile" onchange="velgFil()" >
+	    <br>
+	    <p id="Fil"></p>
+	    <p id="test"></p>
     </div>
 	
-    <div class="col-sm-5">
-      <h3>2. Rediger Variabler</h3>
-      <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
-      <p>
+    <div class="col-sm-5" id ="container2">
+        <h3>2. Rediger Variabler</h3>
+        <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
         <div class="button">
             <input type="button" id="leseFil" value="Last inn fil" onclick ="importModules()"/>
         </div>
-      </p>
-      <p>
-          <textarea id="leseText">Parameterfil</textarea> 
-      </p>
-        <select id="SelectTemplate" name= "ST">
-                <option value="1" id ="innModule1">Test</option>
-                <option value="2">Milestone 2</option>
-        </select>
-        
-        
-            <form id ="tabelVars" onsubmit="return false">
-
-            
+        <textarea id="leseText">Parameterfil</textarea> 
+        <form id ="tabelVars" onsubmit="return false">
             <table style="width: 100%;">
 				<thead>
                 <tr>
@@ -122,13 +105,11 @@
 
 			</tbody>
             </table>
-                <button id="create" onclick="lagFil();lagArray();">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
+            <button id="create" onclick="lagFil();lagArray();">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
             </form>
-        <p id="test3"></p>
-        
-      
     </div>
-    <div class="col-sm-4">
+
+    <div class="col-sm-4" id ="container3">
       <h3>3. Rull ut</h3>
       <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
       <p>
