@@ -18,6 +18,7 @@ function importModules() {
     });
 }
 
+
 function importExisting() {
     $.ajaxSetup({ cache: false })
     $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
@@ -29,6 +30,12 @@ function importExisting() {
         $("#Existing").html(content);
     });
 }
+
+function importVariables() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON()
+}
+
 
 
 function ShowDescription(){
