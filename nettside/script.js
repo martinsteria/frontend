@@ -6,7 +6,7 @@
 	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
-var modules = "http://tfbrowser.routable.org/api/modules"
+var modules = "http://tfbrowser.routable.org/api/library"
 
 function importModules() {
     $.ajaxSetup({ cache: false })
@@ -54,7 +54,7 @@ function importModules() {
 
 function importExisting() {
     $.ajaxSetup({ cache: false })
-    $.getJSON('http://tfbrowser.routable.org/api/modules', function (resultModules) {
+    $.getJSON(modules, function (resultModules) {
         console.log(resultModules);
         var content = ""
         for (i = 0; i < resultModules.length; i++) {
@@ -73,7 +73,7 @@ function importVariables() {
 
 function ShowDescription(){
 	$.ajaxSetup({ cache: false })
-    $.getJSON('http://tfbrowser.routable.org/api/modules', function (result) {
+	$.getJSON(modules, function (result) {
 		console.log(result);
         var content = ""
 		var i = document.getElementById("SelectTemplate").value;
@@ -85,7 +85,7 @@ function ShowDescription(){
 
 function ShowDescriptionE(){
 	$.ajaxSetup({ cache: false })
-    $.getJSON('http://tfbrowser.routable.org/api/modules', function (result) {
+	$.getJSON(modules, function (result) {
 		console.log(result);
         var content = ""
 		var i = document.getElementById("Existing").value;
