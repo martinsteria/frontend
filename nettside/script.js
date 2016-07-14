@@ -16,6 +16,11 @@ function importModules() {
     });
 }
 
+function importVariables() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON()
+}
+
 
 function velgMal() {
 	//empty table "tabelVars"
