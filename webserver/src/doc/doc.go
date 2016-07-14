@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"fmt"
 )
 
 type variable struct {
@@ -40,10 +41,7 @@ func BuildModule(path string) Module {
 			!strings.Contains(f.Name(), ".tfvars") &&
 			!strings.Contains(f.Name(), ".tfstate") {
 			file, err := os.Open(path + "/" + f.Name())
-
-			if err != nil {
-				log.Fatal(err)
-			}
+			checkError(err)
 
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
@@ -119,15 +117,12 @@ func BuildModule(path string) Module {
 					newModule.Provider = strings.TrimSpace(line)
 				}
 
-				if err = scanner.Err(); err != nil {
-					log.Fatal(err)
-				}
+				checkError(err)
 
 			}
 			err = file.Close()
-			if err != nil {
-				log.Fatal(err)
-			}
+			checkError(err)
+
 		}
 	}
 	newModule.Id = strings.Replace(newModule.Name, " ", "", -1)
@@ -144,9 +139,7 @@ func ReadVariableValues(path string, module Module) Module{
 		if strings.Contains(f.Name(), ".tfvars") {
 			file, err := os.Open(path + "/" + f.Name())
 
-			if err != nil {
-				log.Fatal(err)
-			}
+			checkError(err)
 
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
@@ -159,15 +152,40 @@ func ReadVariableValues(path string, module Module) Module{
 						module.Variables[i].Value = strings.TrimSpace(line)
 					}					
 				}
-				if err = scanner.Err(); err != nil {
-					log.Fatal(err)
-				}
+
+				checkError(err)
+
 			}
 		err = file.Close()	
-		if err != nil {
-			log.Fatal(err)
-		}
+		checkError(err)
+
 		}
 	}
 	return module
+}
+
+
+func CreateTFvars(path string, vars []variable) {
+	file, err := os.Create(path + "/terraform.tfvars")
+	
+	checkError(err)
+
+	for i := 0; i < len(vars); i++ {
+		if vars[i].Value != "" {
+			fmt.Println(vars[i].Name)
+			variable := vars[i].Name + " = \"" + vars[i].Value + "\"" + "\n"
+			file.WriteString(variable)
+		}
+	}
+
+	err = file.Close()
+	checkError(err)
+}
+
+
+func checkError(err error){
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
