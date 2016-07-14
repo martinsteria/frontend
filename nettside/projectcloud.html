@@ -26,6 +26,20 @@
 			border-collapse: separate;
 			empty-cells: hide;
 		}
+		.alert-box {
+			color:#555;
+			border-radius:2px;
+			font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
+			padding:10px 10px 10px 10px;
+			margin:0px;
+		}
+		.alert-box span {
+			font-weight:bold;
+		}
+		.notice {
+			background:#e3f7fc url('images/notice.png') no-repeat 10px 50%;
+			border:1px solid #8ed9f6;
+		}
     </style>
     
 
@@ -47,8 +61,8 @@
     <div class="col-sm-3" id ="container1">
         <h3>1. Velg Mal</h3>
         <p>Velg ønsket mal for din infrastruktur.</p>
-        <select id="SelectTemplate" name= "ST"></select> 
-        <input id="Button1" type="button" value="Velg" onclick="velgMal()"/>
+        <select id="SelectTemplate" name= "ST" onchange="ShowDescription();velgMal()" ></select> 
+        <input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" />
 	    <p id="if"></p>
 	    <br>
 	    <br>
@@ -57,6 +71,7 @@
 	    <br>
 	    <p id="Fil"></p>
 	    <p id="test"></p>
+		<div class="alert-box notice" id="Description"></div>
     </div>
 	
     <div class="col-sm-5" id ="container2">

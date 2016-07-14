@@ -72,13 +72,14 @@ func GetModuleIds() []string {
 
 func GetModuleListJSON() []byte {
 	type module struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
 	}
 	var ms []module
 
 	for _, m := range l.Modules {
-		ms = append(ms, module{m.Id, m.Name})
+		ms = append(ms, module{m.Id, m.Name, m.Description})
 	}
 
 	msJSON, _ := json.Marshal(ms)
