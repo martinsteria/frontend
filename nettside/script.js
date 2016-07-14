@@ -2,6 +2,7 @@
     importModules();
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
 function importModules() {
@@ -10,11 +11,26 @@ function importModules() {
         console.log(resultModules);
         var content = ""
         for (i = 0; i < resultModules.length; i++) {
-            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\">" + resultModules[i].name + "</option>"
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
         $("#SelectTemplate").html(content);
     });
 }
+
+
+
+function ShowDescription(){
+	$.ajaxSetup({ cache: false })
+    $.getJSON('http://tfbrowser.routable.org/api/modules', function (result) {
+		console.log(result);
+        var content = ""
+		var i = document.getElementById("SelectTemplate").value;
+		content += "<span>" + result[i].id + "</span><br>" + result[i].description 
+		document.getElementById("Description").innerHTML =  content;
+		document.getElementsByClassName('alert-box notice')[0].style.visibility = 'visible';
+	});
+}
+
 
 
 function velgMal() {
@@ -101,8 +117,6 @@ function lagArray() {
         link.style.display = 'block';
     }, false);
 })();
-
-
 
 function Milestone1() {
 
