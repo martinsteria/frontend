@@ -12,14 +12,14 @@ const (
 )
 
 type endpoint struct {
-	Url      string
-	Function func() []byte
+	Url     string
+	Methods map[string]func() []byte
 }
 
 var endpoints []endpoint
 
-func AddEndpoint(url string, function func() []byte) {
-	endpoints = append(endpoints, endpoint{url, function})
+func AddEndpoint(url string, methods map[string]func() []byte) {
+	endpoints = append(endpoints, endpoint{url, methods})
 }
 
 func HandleRequests(port string) {
@@ -29,13 +29,17 @@ func HandleRequests(port string) {
 	for _, r := range endpoints {
 		go func(e endpoint) {
 			http.HandleFunc(e.Url, func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				n, err := w.Write(e.Function())
-				fmt.Println(time.Now())
-				fmt.Println(string(e.Function()))
-				fmt.Println(n)
-				fmt.Println(err)
-				fmt.Print("\n")
+				method, present := e.Methods[r.Method]
+				if present {
+					w.Header().Set("Content-Type", "application/json")
+					w.Write(method())
+					fmt.Println(string(method()))
+					fmt.Println(time.Now())
+					fmt.Print("\n")
+				} else {
+					w.Header().Set("Status", "403")
+					w.Write([]byte(""))
+				}
 			})
 		}(r)
 	}
