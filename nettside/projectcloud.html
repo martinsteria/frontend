@@ -40,6 +40,7 @@
 			background:#e3f7fc url('images/notice.png') no-repeat 10px 50%;
 			border:1px solid #8ed9f6;
 		}
+    </style> 
     </style>
     
 
@@ -62,15 +63,17 @@
         <h3>1. Velg Mal</h3>
         <p>Velg ønsket mal for din infrastruktur.</p>
         <select id="SelectTemplate" name= "ST" onchange="ShowDescription();velgMal()" ></select> 
-        <input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" />
-	    <p id="if"></p>
 	    <br>
 	    <br>
-	    <!--Knap for å laste inn en fil. Kan være en fil eller .zip-->
+		<p>Eksisterende infrastruktur</p>
+        <select id="Existing" name= "Ex" onchange="ShowDescriptionE();velgMalE()" ></select>
+ <!--       <input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" /> -->
+	    <br>
+	    <br>
+ <!--	   Knap for å laste inn en fil. Kan være en fil eller .zip
 	    <input type="file" id="myFile" onchange="velgFil()" >
-	    <br>
-	    <p id="Fil"></p>
-	    <p id="test"></p>
+	    <br> -->
+		
 		<div class="alert-box notice" id="Description"></div>
     </div>
 	
