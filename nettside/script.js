@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     importModules();
 	importExisting()
-    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+    //document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
@@ -13,13 +13,22 @@ function importModules() {
     $.getJSON(modules, function (resultModules) {
         console.log(resultModules);
         var content = ""
+        var content2 = ""
         for (i = 0; i < resultModules.length; i++) {
-            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+            content2 += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+           // content += "<button id=" + resultModules[i].id + ">" + resultModules[i].name + "</button>"
+            
         }
-        $("#SelectTemplate").html(content);
+
+        $("#SelectTemplate").html(content2);
+        for (i = 0; i < resultModules.length; i++) {
+            $("SelectTemplate").html(content2);
+        }
+
+        $("#modules").html(content);
         for (i = 0; i < resultModules.length; i++) {
             (function (index) {
-                //$("#" + resultModules[index].id).change(function () {
+                $("#" + resultModules[index].id).click(function () {
                     $.getJSON(modules + "?get=" + resultModules[index].id, function (result) {
                         console.log(result)
                         var myTable = ""
@@ -45,7 +54,7 @@ function importModules() {
 
 
                     })
-               // })
+                })
             })(i)
         }
     });
@@ -112,8 +121,8 @@ function velgMal() {
 			Milestone2();
 	} 
 	else {
-	    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-	    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+	   // document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+	   // document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	}
 
 };
