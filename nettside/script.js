@@ -20,7 +20,7 @@ function importModules() {
         for (i = 0; i < resultModules.length; i++) {
             (function (index) {
                 //$("#" + resultModules[index].id).change(function () {
-                    $.getJSON(modules + "/" + resultModules[index].id, function (result) {
+                    $.getJSON(modules + "?get=" + resultModules[index].id, function (result) {
                         console.log(result)
                         var myTable = ""
 

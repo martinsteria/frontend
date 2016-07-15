@@ -1,0 +1,11 @@
+[0714/162641:ERROR:process_reader_win.cc(172)] ResumeThread: The operation completed successfully. (0x0)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(113)] NtOpenThread: An invalid Client ID was specified.  (0xc000000b)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0714/162641:ERROR:exception_snapshot_win.cc(57)] thread ID 7540 not found in process
+[0714/162641:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::InitializeException failed
