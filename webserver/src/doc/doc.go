@@ -1,11 +1,11 @@
 package doc
+
 import (
 	"bufio"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"fmt"
 )
 
 type variable struct {
@@ -59,7 +59,7 @@ func BuildModule(path string) Module {
 							newModule.Description += strings.TrimSpace(line)
 							break
 						}
-						newModule.Description += strings.TrimSpace(line) //To get rid of blank enters.
+						newModule.Description += strings.TrimSpace(line) 
 						scanner.Scan()
 						line = scanner.Text()
 						line = strings.Replace(line, "\"", "", -1)
@@ -108,7 +108,6 @@ func BuildModule(path string) Module {
 						line = scanner.Text()
 						line = strings.Replace(line, "\"", "", -1)
 					}
-
 					outputs = append(outputs, temp_output)
 
 				} else if (strings.Contains(line, "provider")) {
@@ -116,16 +115,13 @@ func BuildModule(path string) Module {
 					line = strings.Trim(line, " { } ")
 					newModule.Provider = strings.TrimSpace(line)
 				}
-
 				checkError(err)
-
 			}
 			err = file.Close()
 			checkError(err)
-
 		}
 	}
-	newModule.Id = strings.Replace(newModule.Name, " ", "", -1)
+	newModule.Id = strings.Replace(path, " ", "", -1)
 	newModule.Variables = variables
 	newModule.Outputs = outputs
 
@@ -138,7 +134,6 @@ func ReadVariableValues(path string, module Module) Module{
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tfvars") {
 			file, err := os.Open(path + "/" + f.Name())
-
 			checkError(err)
 
 			scanner := bufio.NewScanner(file)
@@ -152,13 +147,10 @@ func ReadVariableValues(path string, module Module) Module{
 						module.Variables[i].Value = strings.TrimSpace(line)
 					}					
 				}
-
 				checkError(err)
-
 			}
 		err = file.Close()	
 		checkError(err)
-
 		}
 	}
 	return module
@@ -169,10 +161,8 @@ func CreateTFvars(path string, vars []variable) {
 	file, err := os.Create(path + "/terraform.tfvars")
 	
 	checkError(err)
-
 	for i := 0; i < len(vars); i++ {
 		if vars[i].Value != "" {
-			fmt.Println(vars[i].Name)
 			variable := vars[i].Name + " = \"" + vars[i].Value + "\"" + "\n"
 			file.WriteString(variable)
 		}
@@ -184,7 +174,6 @@ func CreateTFvars(path string, vars []variable) {
 
 
 func checkError(err error){
-
 	if err != nil {
 		log.Fatal(err)
 	}
