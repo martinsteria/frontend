@@ -1,6 +1,7 @@
 package library
 
 import (
+	"api"
 	"doc"
 	"encoding/json"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"users"
 )
 
 const (
@@ -62,23 +64,40 @@ func pullLibrary() {
 	fmt.Println(string(out))
 }
 
-func GetModuleIds() []string {
-	var Ids []string
-	for _, m := range l.Modules {
-		Ids = append(Ids, m.Id)
+func HandleLibraryGetRequests(r api.RequestData) []byte {
+	v, present := r.Query["get"]
+
+	if present {
+		return GetModuleDocumentationJSON(v[0])
 	}
-	return Ids
+
+	v, present = r.Query["copy"]
+	if present {
+		v, present = r.Query["user"]
+		if present {
+			return CopyModule(r.Query["copy"][0], r.Query["user"][0])
+		}
+	}
+
+	for k, v := range r.Query {
+		if k == "get" {
+			return GetModuleDocumentationJSON(v[0])
+		}
+	}
+
+	return GetModuleListJSON()
 }
 
 func GetModuleListJSON() []byte {
 	type module struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
 	}
 	var ms []module
 
 	for _, m := range l.Modules {
-		ms = append(ms, module{m.Id, m.Name})
+		ms = append(ms, module{m.Id, m.Name, m.Description})
 	}
 
 	msJSON, _ := json.Marshal(ms)
@@ -108,4 +127,9 @@ func buildLibrary() Library {
 	}
 
 	return lib
+}
+
+func CopyModule(id string, user string) []byte {
+	exec.Command("cp", "-r", libraryRootFolder+"/modules/"+id, users.UsersRootFolder+"/"+user).Output()
+	return []byte("{\"status\": \"success\"}")
 }

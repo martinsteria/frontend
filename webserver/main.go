@@ -4,23 +4,25 @@ import (
 	"api"
 	"library"
 	"os"
+	"users"
 )
 
 func main() {
 	library.Init()
-	api.AddEndpoint("/api", func() []byte {
-		return []byte("{}")
+
+	api.AddResponse("/api", map[string]func(api.RequestData) []byte{
+		"GET": func(r api.RequestData) []byte {
+			return []byte("{}")
+		},
 	})
 
-	api.AddEndpoint("/api/modules", library.GetModuleListJSON)
+	api.AddResponse("/api/users", map[string]func(api.RequestData) []byte{
+		"GET": users.HandleUserRequests,
+	})
 
-	for _, v := range library.GetModuleIds() {
-		func(id string) {
-			api.AddEndpoint("/api/modules/"+id, func() []byte {
-				return library.GetModuleDocumentationJSON(id)
-			})
-		}(v)
-	}
+	api.AddResponse("/api/library", map[string]func(api.RequestData) []byte{
+		"GET": library.HandleLibraryGetRequests,
+	})
 
 	api.HandleRequests(os.Args[1])
 }
