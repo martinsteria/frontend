@@ -12,19 +12,20 @@ const (
 )
 
 type RequestData struct {
-	Query map[string][]string
-	Body  []byte
+	Query  map[string][]string
+	Body   []byte
+	Method string
 }
 
 type response struct {
 	Endpoint string
-	Methods  map[string]func(RequestData) []byte
+	Callback func(RequestData) []byte
 }
 
 var responses []response
 
-func AddResponse(endpoint string, methods map[string]func(RequestData) []byte) {
-	responses = append(responses, response{endpoint, methods})
+func AddResponse(endpoint string, callback func(RequestData) []byte) {
+	responses = append(responses, response{endpoint, callback})
 }
 
 func HandleRequests(port string) {
@@ -34,22 +35,18 @@ func HandleRequests(port string) {
 	for _, r := range responses {
 		func(e response) {
 			http.HandleFunc(e.Endpoint, func(w http.ResponseWriter, r *http.Request) {
-				method, present := e.Methods[r.Method]
-				if present {
-					buffer := make([]byte, 4096)
-					n, _ := r.Body.Read(buffer)
-					req := RequestData{
-						Query: r.URL.Query(),
-						Body:  buffer[:n],
-					}
-					w.Header().Set("Content-Type", "application/json")
-					w.Write(method(req))
-					fmt.Println(time.Now())
-					fmt.Print("\n")
-				} else {
-					w.Header().Set("Status", "403")
-					w.Write([]byte(""))
+				buffer := make([]byte, 4096)
+				n, _ := r.Body.Read(buffer)
+				req := RequestData{
+					Query:  r.URL.Query(),
+					Body:   buffer[:n],
+					Method: r.Method,
 				}
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(e.Callback(req))
+				fmt.Println(time.Now())
+				fmt.Println(req)
+				fmt.Print("\n")
 			})
 		}(r)
 	}
