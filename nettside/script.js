@@ -2,8 +2,8 @@
     importModules();
 	importExisting()
     //document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
-	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
+  //  document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+//	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
 var modules = "http://tfbrowser.routable.org/api/library"
@@ -309,6 +309,11 @@ function velgFil(){
     */
 function loggInn() {
 
-    location.href = "projectcloud.html"
+   // location.href = "projectcloud.html"
+
+   
+    var varBrukernavn = $("#innBrukernavn").value;
+    console.log(varBrukernavn)
+    $("#brukerOut").html(varBrukernavn);
 }
 
