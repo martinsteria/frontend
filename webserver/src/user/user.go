@@ -12,7 +12,7 @@ type User struct {
 }
 
 func CreateUser(dirPath string) User {
-	if _, err := os.Stat(dirPath); err != nil {
+	if _, err := os.Stat(dirPath); err == nil {
 		return User{}
 	}
 
@@ -22,4 +22,5 @@ func CreateUser(dirPath string) User {
 
 func (u *User) AddModule(modulePath string) {
 	exec.Command("cp", "-r", modulePath, u.Dir).Output()
+	u.Lib = library.BuildLibrary(u.Dir)
 }

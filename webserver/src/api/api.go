@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -12,7 +13,7 @@ const (
 )
 
 type RequestData struct {
-	Query  map[string][]string
+	Query  map[string]string
 	Body   []byte
 	Method string
 }
@@ -37,15 +38,22 @@ func HandleRequests(port string) {
 			http.HandleFunc(e.Endpoint, func(w http.ResponseWriter, r *http.Request) {
 				buffer := make([]byte, 4096)
 				n, _ := r.Body.Read(buffer)
+
+				query := make(map[string]string)
+				for k, v := range r.URL.Query() {
+					query[k] = strings.Join(v, "")
+				}
 				req := RequestData{
-					Query:  r.URL.Query(),
+					Query:  query,
 					Body:   buffer[:n],
 					Method: r.Method,
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(e.Callback(req))
 				fmt.Println(time.Now())
-				fmt.Println(req)
+				fmt.Println(req.Method)
+				fmt.Println(req.Query)
+				fmt.Println(string(req.Body))
 				fmt.Print("\n")
 			})
 		}(r)
