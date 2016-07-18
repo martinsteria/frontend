@@ -307,6 +307,12 @@ function velgFil(){
 	}
 
     */
+
+var inputBox = document.getElementById('chatinput');
+inputBox.onkeyup = function () {
+    document.getElementById('brukerOut').innerHTML = inputBox.value;
+}
+
 function loggInn() {
 
    // location.href = "projectcloud.html"
