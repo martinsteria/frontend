@@ -73,6 +73,9 @@ func HandleDeployRequests(r api.RequestData) []byte {
 
 			}
 		}
+	} else if r.Method == "GET" {
+		if user, present := r.Query["user"]; present {			
+			if module, present := r.Query["module"]; present {
 	}
 	
 	return []byte("failed")
