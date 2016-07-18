@@ -1,46 +1,54 @@
 package doc
+
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"fmt"
+	"terraform"
 )
 
-type variable struct {
+type Variable struct {
 	Name         string `json:"name"`
 	Description  string `json:"description"`
 	DefaultValue string `json:"defaultValue"`
-	Value 		 string `json:"value"`
+	Value        string `json:"value"`
 }
 
-type output struct {
+type Output struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
 type Module struct {
-	Name        string     `json:"name"`
-	Id          string     `json:"id"`
-	Description string     `json:"description"`
-	Provider 	string 	   `json:"provider"`
-	Variables   []variable `json:"variables"`
-	Outputs     []output   `json:"outputs"`
+	Name        string               `json:"name"`
+	Path        string               `json:"path"`
+	Id          string               `json:"id"`
+	Description string               `json:"description"`
+	Provider    string               `json:"provider"`
+	Deployment  terraform.Deployment `json:"deployment"`
+	Variables   []Variable           `json:"variables"`
+	Outputs     []Output             `json:"outputs"`
 }
 
-func BuildModule(path string) Module {
-	files, _ := ioutil.ReadDir(path)
+func NewModule(path string) *Module {
+	return &Module{Path: path}
+}
 
-	var newModule Module
-	var variables []variable
-	var outputs []output
+func (m *Module) BuildModule() {
+	files, _ := ioutil.ReadDir(m.Path)
+
+	var variables []Variable
+	var outputs []Output
 	add := false
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tf") &&
 			!strings.Contains(f.Name(), ".tfvars") &&
 			!strings.Contains(f.Name(), ".tfstate") {
-			file, err := os.Open(path + "/" + f.Name())
+			file, err := os.Open(m.Path + "/" + f.Name())
 			checkError(err)
 
 			scanner := bufio.NewScanner(file)
@@ -49,17 +57,17 @@ func BuildModule(path string) Module {
 				line = strings.Replace(line, "\"", "", -1)
 				if strings.Contains(line, "#") {
 					line = strings.Replace(line, "#", "", -1)
-					newModule.Name = strings.TrimSpace(line)
+					m.Name = strings.TrimSpace(line)
 
 				} else if strings.Contains(line, "Module Description") {
 					line := strings.Replace(line, "Module Description = ", "", -1)
 					for {
 						if strings.Contains(line, "*/") {
 							line = strings.Trim(line, "*/")
-							newModule.Description += strings.TrimSpace(line)
+							m.Description += strings.TrimSpace(line)
 							break
 						}
-						newModule.Description += strings.TrimSpace(line) //To get rid of blank enters.
+						m.Description += strings.TrimSpace(line)
 						scanner.Scan()
 						line = scanner.Text()
 						line = strings.Replace(line, "\"", "", -1)
@@ -70,7 +78,7 @@ func BuildModule(path string) Module {
 					line = strings.Replace(line, "\"", "", -1)
 					line = strings.Trim(line, " { } ")
 
-					var temp_variable variable
+					var temp_variable Variable
 					temp_variable.Name = strings.TrimSpace(line)
 					for {
 						if strings.Contains(scanner.Text(), "}") {
@@ -90,7 +98,7 @@ func BuildModule(path string) Module {
 					variables = append(variables, temp_variable)
 
 				} else if strings.Contains(line, "output") {
-					var temp_output output
+					var temp_output Output
 					line = strings.Replace(line, "output", "", -1)
 					line = strings.Trim(line, " { } ")
 					temp_output.Name = strings.TrimSpace(line)
@@ -108,71 +116,64 @@ func BuildModule(path string) Module {
 						line = scanner.Text()
 						line = strings.Replace(line, "\"", "", -1)
 					}
-
 					outputs = append(outputs, temp_output)
 
-				} else if (strings.Contains(line, "provider")) {
+				} else if strings.Contains(line, "provider") {
 					line = strings.Replace(line, "provider", "", -1)
 					line = strings.Trim(line, " { } ")
-					newModule.Provider = strings.TrimSpace(line)
+					m.Provider = strings.TrimSpace(line)
 				}
-
 				checkError(err)
-
 			}
 			err = file.Close()
 			checkError(err)
-
 		}
 	}
-	newModule.Id = strings.Replace(newModule.Name, " ", "", -1)
-	newModule.Variables = variables
-	newModule.Outputs = outputs
-
-	return newModule
+	pathList := strings.Split(strings.TrimSpace(m.Path), "/")
+	m.Id = pathList[len(pathList)-1]
+	m.Variables = variables
+	m.Outputs = outputs
 }
 
-func ReadVariableValues(path string, module Module) Module{
-	files, _ := ioutil.ReadDir(path)
+//TODO: Integrate with buildmodule
+func (m *Module) updateVariableValues() {
+	files, _ := ioutil.ReadDir(m.Path)
 
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tfvars") {
-			file, err := os.Open(path + "/" + f.Name())
-
+			file, err := os.Open(m.Path + "/" + f.Name())
 			checkError(err)
 
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
 				line := scanner.Text()
-				for i := 0; i < len(module.Variables); i++ {
-					if strings.Contains(line, module.Variables[i].Name) {
+				for i := 0; i < len(m.Variables); i++ {
+					if strings.Contains(line, m.Variables[i].Name) {
 						line = strings.Replace(line, "\"", "", -1)
-						line = strings.Replace(line, module.Variables[i].Name, "", -1)
+						line = strings.Replace(line, m.Variables[i].Name, "", -1)
 						line = strings.Replace(line, "=", "", -1)
-						module.Variables[i].Value = strings.TrimSpace(line)
-					}					
+						m.Variables[i].Value = strings.TrimSpace(line)
+					}
 				}
-
 				checkError(err)
-
 			}
-		err = file.Close()	
-		checkError(err)
-
+			err = file.Close()
+			checkError(err)
 		}
 	}
-	return module
 }
 
+func (m *Module) UpdateModule(varsJSON []byte) {
+	file, err := os.Create(m.Path + "/terraform.tfvars")
 
-func CreateTFvars(path string, vars []variable) {
-	file, err := os.Create(path + "/terraform.tfvars")
-	
+	vars := make([]Variable, 5)
+	json.Unmarshal(varsJSON, &vars)
+	fmt.Println(string(varsJSON))
+	fmt.Println(vars)
+
 	checkError(err)
-
 	for i := 0; i < len(vars); i++ {
 		if vars[i].Value != "" {
-			fmt.Println(vars[i].Name)
 			variable := vars[i].Name + " = \"" + vars[i].Value + "\"" + "\n"
 			file.WriteString(variable)
 		}
@@ -180,12 +181,24 @@ func CreateTFvars(path string, vars []variable) {
 
 	err = file.Close()
 	checkError(err)
+
+	m.updateVariableValues()
 }
 
-
-func checkError(err error){
-
+func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
+
+/*
+func DeleteKeys(path string, module Module){
+	for i := 0; i < len(module.Variables); i++ {
+		if strings.Contains(module.Variables[i].Name, "access_key") ||
+		strings.Contains(module.Variables[i].Name, "secret_key"){
+			module.Variables[i].Value = ""
+		}
+	}
+	CreateTFvars(path, module.Variables)
+}
+*/

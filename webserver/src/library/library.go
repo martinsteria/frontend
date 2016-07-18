@@ -1,94 +1,33 @@
 package library
 
 import (
-	"api"
 	"doc"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"os"
-	"os/exec"
-	"time"
-	"users"
 )
 
 const (
-	libraryURL        = "https://github.com/martinsteria/library"
-	libraryRootFolder = "/home/martin/library"
+	libraryURL     = "https://github.com/martinsteria/library"
+	LibraryRootDir = "/home/martin/library"
+	LibraryModules = LibraryRootDir + "/modules"
 )
 
 type Library struct {
-	Modules []doc.Module
+	Modules map[string]*doc.Module
+	RootDir string
 }
 
-var l Library
-
-func Init() {
-	l = updateLibrary()
-	go libraryUpdater()
-
-	fmt.Println("Library initialized successfully")
+func NewLibrary(rootDir string) *Library {
+	l := &Library{RootDir: rootDir}
+	l.Build()
+	return l
 }
 
-func libraryUpdater() {
-	for {
-		time.Sleep(24 * time.Hour)
-
-		//UNSAFE: Trouble if someone accesses the library during the update
-		l = updateLibrary()
-	}
+func (l *Library) GetRootDir() string {
+	return l.RootDir
 }
 
-func updateLibrary() Library {
-	currentPath, _ := os.Getwd()
-	err := os.Chdir(libraryRootFolder)
-
-	if err != nil {
-		cloneLibrary()
-		os.Chdir(currentPath)
-	} else {
-		pullLibrary()
-	}
-	os.Chdir(currentPath)
-
-	return buildLibrary()
-}
-
-func cloneLibrary() {
-	out, _ := exec.Command("git", "clone", libraryURL, libraryRootFolder).CombinedOutput()
-	fmt.Println(string(out))
-}
-
-func pullLibrary() {
-	out, _ := exec.Command("git", "pull", "origin", "master").CombinedOutput()
-	fmt.Println(string(out))
-}
-
-func HandleLibraryGetRequests(r api.RequestData) []byte {
-	v, present := r.Query["get"]
-
-	if present {
-		return GetModuleDocumentationJSON(v[0])
-	}
-
-	v, present = r.Query["copy"]
-	if present {
-		v, present = r.Query["user"]
-		if present {
-			return CopyModule(r.Query["copy"][0], r.Query["user"][0])
-		}
-	}
-
-	for k, v := range r.Query {
-		if k == "get" {
-			return GetModuleDocumentationJSON(v[0])
-		}
-	}
-
-	return GetModuleListJSON()
-}
-
-func GetModuleListJSON() []byte {
+func (l *Library) GetModuleListJSON() []byte {
 	type module struct {
 		Id          string `json:"id"`
 		Name        string `json:"name"`
@@ -104,32 +43,40 @@ func GetModuleListJSON() []byte {
 	return msJSON
 }
 
-func GetModuleDocumentationJSON(id string) []byte {
+func (l *Library) GetModuleDocumentationJSON(id string) []byte {
+	if l.Modules[id] == nil {
+		return []byte("{\"status\": \"Module not found\"}")
+	}
 	var moduleJSON []byte
-	for _, m := range l.Modules {
-		if id == m.Id {
-			moduleJSON, _ = json.Marshal(m)
-		}
+
+	type module struct {
+		Name        string         `json:"name"`
+		Id          string         `json:"id"`
+		Description string         `json:"description"`
+		Provider    string         `json:"provider"`
+		Variables   []doc.Variable `json:"variables"`
+		Outputs     []doc.Output   `json:"outputs"`
 	}
 
+	m := module{
+		Name:        l.Modules[id].Name,
+		Id:          l.Modules[id].Id,
+		Description: l.Modules[id].Description,
+		Provider:    l.Modules[id].Provider,
+		Variables:   l.Modules[id].Variables,
+		Outputs:     l.Modules[id].Outputs,
+	}
+
+	moduleJSON, _ = json.Marshal(m)
 	return moduleJSON
 }
 
-func buildLibrary() Library {
-	var lib Library
-
-	files, _ := ioutil.ReadDir(libraryRootFolder + "/modules")
+func (l *Library) Build() {
+	l.Modules = make(map[string]*doc.Module)
+	files, _ := ioutil.ReadDir(l.RootDir)
 
 	for _, f := range files {
-		lib.Modules = append(
-			lib.Modules,
-			doc.BuildModule(libraryRootFolder+"/modules/"+f.Name()))
+		l.Modules[f.Name()] = doc.NewModule(l.RootDir + "/" + f.Name())
+		l.Modules[f.Name()].BuildModule()
 	}
-
-	return lib
-}
-
-func CopyModule(id string, user string) []byte {
-	exec.Command("cp", "-r", libraryRootFolder+"/modules/"+id, users.UsersRootFolder+"/"+user).Output()
-	return []byte("{\"status\": \"success\"}")
 }
