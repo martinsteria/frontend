@@ -314,8 +314,10 @@ function velgFil(){
 function loggInn() {
 
 
-    var varBrukernavn = document.getElementById("chatinput");
+    var varBrukernavn = document.getElementById("brukernavnInn");
     document.getElementById('brukerOut').innerHTML = varBrukernavn.value;
+
+    //Sende brukernavnet til server
 
     
 }
