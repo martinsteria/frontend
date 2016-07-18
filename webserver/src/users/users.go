@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	usersRootDir = "/home/martin/users"
+	UsersRootDir = "/home/martin/users"
 )
 
 type User struct {
@@ -22,16 +22,16 @@ var users map[string]*User
 
 func Init() {
 	users = make(map[string]*User)
-	files, _ := ioutil.ReadDir(usersRootDir)
+	files, _ := ioutil.ReadDir(UsersRootDir)
 	for _, u := range files {
-		userPath := usersRootDir + "/" + u.Name()
+		userPath := UsersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
 		users[u.Name()].Lib = library.NewLibrary(userPath)
 	}
 }
 
 func AddUser(name string) {
-	rootDir := usersRootDir + "/" + name
+	rootDir := UsersRootDir + "/" + name
 	if _, err := os.Stat(rootDir); err == nil {
 		return
 	}

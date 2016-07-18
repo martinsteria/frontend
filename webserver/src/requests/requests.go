@@ -61,10 +61,10 @@ func HandleDeployRequests(r api.RequestData) []byte {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
-					user.Lib.Modules[module].UpdateModule(r.Body)
-					user.Lib.Modules[module].Deployment.Init(usersRootDir + "/" + user + "/" + module)
-					user.Lib.Modules[module].Deployment.TerraformCommand(command)
-					return user.Lib.Modules[module].Deployment.Output
+					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
+					users.GetLibrary(user).Modules[module].Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
+					users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
+					return users.GetLibrary(user).Modules[module].Deployment.Output
 				}
 
 			}
@@ -72,7 +72,15 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	} else if r.Method == "GET" {
 		if user, present := r.Query["user"]; present {			
 			if module, present := r.Query["module"]; present {
+				if users.GetLibrary(user).Modules[module].Deployment.Status == "Running" {
+					return []byte("{\"status:\": \"Running\"}")
+				} else {
+					return users.GetLibrary(user).Modules[module].Deployment.Output
+				}
+			}
+		}
 	}
 
-	return []byte("failed")
+	return []byte("{\"status:\": \"failed\"}")
 }
+
