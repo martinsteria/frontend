@@ -40,6 +40,67 @@
 			background:#e3f7fc url('images/notice.png') no-repeat 10px 50%;
 			border:1px solid #8ed9f6;
 		}
+		.help-tip{
+			position: relative;
+			top: 1px;
+			right: 1px;
+			text-align: center;
+			background-color: #BCDBEA;
+			border-radius: 50%;
+			width: 22px;
+			height: 22px;
+			font-size: 13px;
+			line-height: 24px;
+			cursor: default;
+		}
+
+		.help-tip:before{
+			content:'?';
+			font-weight: bold;
+			color:#fff;
+		}
+
+		.help-tip:hover p{
+			display:block;
+			transform-origin: 100% 0%;
+
+		}
+
+		.help-tip p{	/* The tooltip */
+			display: none;
+			text-align: left;
+			background-color: #1E2021;
+			padding: 20px;
+			width: 300px;
+			z-index: 1; position:absolute;
+			border-radius: 3px;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			right: -4px;
+			color: #FFF;
+			font-size: 13px;
+			line-height: 1.4;
+		}
+
+		.help-tip p:before{ /* The pointer of the tooltip */
+			position: absolute;
+			content: '';
+			width:0;
+			height: 0;
+			border:6px solid transparent;
+			border-bottom-color:#1E2021;
+			right:10px;
+			top:-12px;
+		}
+
+		.help-tip p:after{ /* Prevents the tooltip from being hidden */
+			width:100%;
+			height:40px;
+			content:'';
+			position: absolute;
+			top:-40px;
+			left:0;
+		}
+		
     </style> 
     </style>
     
@@ -134,7 +195,9 @@
 
             <button id="create" onclick="lagFil();lagArray();">Lag fil</button> <a download="terraform.tfvars" id="downloadlink" style="display: none">Last ned</a>
             
-
+		<div id="tooltip" class="tooltip">
+			Remove this row.
+		</div>
         <table id ="variablesTable"></table>
 
     </div>

@@ -3,7 +3,7 @@
 	importExisting()
     document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
     document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
-//	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
+	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
 var modules = "http://52.169.232.92/api/library"
@@ -44,7 +44,7 @@ function importModules() {
                             var textInputBox = '<input type="text" id="' + [i] + '"name="' + [i] + '" />';
                             myTable += '<tr>'
                             myTable += '<td>' + result.variables[i].name + '</td>'
-                            myTable += '<td>' + result.variables[i].description + '</td>'
+                            myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
                             myTable += '<td>' + textInputBox + '</td>'
                             myTable += '</tr>'
 
@@ -59,6 +59,7 @@ function importModules() {
         }
     });
 }
+//result.variables[i].description
 
 
 function importExisting() {
