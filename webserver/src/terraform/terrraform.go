@@ -5,10 +5,17 @@ import (
 	"os/exec"
 )
 
+type deploy struct {
+	Status         	string `json:"status"`
+	Path         	string `json:"path"`
+	Output  		string `json:"description"`
+}
+
+
 func TerraformCommand(command string, path string) string {
 
 	terraformInit(path) // SHOULD BE PUT SOMEWHERE ELSE!!
-
+	if 
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
 		cmd.Dir = path

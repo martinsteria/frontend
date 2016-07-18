@@ -13,7 +13,7 @@ const (
 )
 
 type Library struct {
-	Modules map[string]doc.Module
+	Modules map[string]*doc.Module
 }
 
 func (l *Library) GetModuleListJSON() []byte {
@@ -46,11 +46,12 @@ func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 
 func BuildLibrary(rootDir string) Library {
 	var lib Library
-	lib.Modules = make(map[string]doc.Module)
+	lib.Modules = make(map[string]*doc.Module)
 	files, _ := ioutil.ReadDir(rootDir)
 
 	for _, f := range files {
-		lib.Modules[f.Name()] = doc.BuildModule(LibraryModules + "/" + f.Name())
+		lib.Modules[f.Name()].Path = (LibraryModules + "/" + f.Name())
+		lib.Modules[f.Name()].BuildModule()
 	}
 
 	return lib

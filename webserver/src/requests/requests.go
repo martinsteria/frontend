@@ -86,3 +86,20 @@ func HandleLibraryRequests(r api.RequestData) []byte {
 
 	return lib.Lib.GetModuleListJSON()
 }
+
+func HandleDeployRequests(r api.RequestData) []byte {
+	if r.Method == "POST" {
+		if user, present := r.Query["user"]; present {			
+			if module, present := r.Query["module"]; present {
+				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
+					user.Lib.Modules[module].UpdateModule(usersRootDir + "/" + user + "/" + module, r.Body)
+					
+
+				}
+
+			}
+		}
+	}
+	var a []byte
+	return a
+}

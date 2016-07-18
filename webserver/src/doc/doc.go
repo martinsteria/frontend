@@ -24,6 +24,7 @@ type output struct {
 
 type Module struct {
 	Name        string     `json:"name"`
+	Path 		string 	   `json:"path"`
 	Id          string     `json:"id"`
 	Description string     `json:"description"`
 	Provider    string     `json:"provider"`
@@ -31,8 +32,8 @@ type Module struct {
 	Outputs     []output   `json:"outputs"`
 }
 
-func BuildModule(path string) Module {
-	files, _ := ioutil.ReadDir(path)
+func (m *Module)BuildModule() Module {
+	files, _ := ioutil.ReadDir(m.Path)
 
 	var newModule Module
 	var variables []variable
@@ -42,7 +43,7 @@ func BuildModule(path string) Module {
 		if strings.Contains(f.Name(), ".tf") &&
 			!strings.Contains(f.Name(), ".tfvars") &&
 			!strings.Contains(f.Name(), ".tfstate") {
-			file, err := os.Open(path + "/" + f.Name())
+			file, err := os.Open(m.Path + "/" + f.Name())
 			checkError(err)
 
 			scanner := bufio.NewScanner(file)
@@ -123,7 +124,7 @@ func BuildModule(path string) Module {
 			checkError(err)
 		}
 	}
-	pathList := strings.Split(strings.TrimSpace(path), "/")
+	pathList := strings.Split(strings.TrimSpace(m.Path), "/")
 	newModule.Id = pathList[len(pathList)-1]
 	newModule.Variables = variables
 	newModule.Outputs = outputs
@@ -132,23 +133,23 @@ func BuildModule(path string) Module {
 }
 
 //TODO: Integrate with buildmodule
-func ReadVariableValues(path string, module Module) Module {
-	files, _ := ioutil.ReadDir(path)
+func (m *Module)updateVariableValues() {
+	files, _ := ioutil.ReadDir(m.Path)
 
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tfvars") {
-			file, err := os.Open(path + "/" + f.Name())
+			file, err := os.Open(m.Path + "/" + f.Name())
 			checkError(err)
 
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
 				line := scanner.Text()
-				for i := 0; i < len(module.Variables); i++ {
-					if strings.Contains(line, module.Variables[i].Name) {
+				for i := 0; i < len(m.Variables); i++ {
+					if strings.Contains(line, m.Variables[i].Name) {
 						line = strings.Replace(line, "\"", "", -1)
-						line = strings.Replace(line, module.Variables[i].Name, "", -1)
+						line = strings.Replace(line, m.Variables[i].Name, "", -1)
 						line = strings.Replace(line, "=", "", -1)
-						module.Variables[i].Value = strings.TrimSpace(line)
+						m.Variables[i].Value = strings.TrimSpace(line)
 					}
 				}
 				checkError(err)
@@ -157,11 +158,10 @@ func ReadVariableValues(path string, module Module) Module {
 			checkError(err)
 		}
 	}
-	return module
 }
 
-func CreateTFvars(path string, varsJSON []byte) {
-	file, err := os.Create(path + "/terraform.tfvars")
+func (m *Module) UpdateModule(varsJSON []byte) {
+	file, err := os.Create(m.Path + "/terraform.tfvars")
 
 	vars := make([]variable, 5)
 	json.Unmarshal(varsJSON, &vars)
@@ -178,6 +178,8 @@ func CreateTFvars(path string, varsJSON []byte) {
 
 	err = file.Close()
 	checkError(err)
+
+	m.updateVariableValues()
 }
 
 func checkError(err error) {
@@ -185,7 +187,7 @@ func checkError(err error) {
 		log.Fatal(err)
 	}
 }
-
+/*
 func DeleteKeys(path string, module Module){
 	for i := 0; i < len(module.Variables); i++ {
 		if strings.Contains(module.Variables[i].Name, "access_key") || 
@@ -195,3 +197,4 @@ func DeleteKeys(path string, module Module){
 	}
 	CreateTFvars(path, module.Variables)
 }
+*/
