@@ -32,16 +32,13 @@ func Init() {
 
 func HandleUserRequests(r api.RequestData) []byte {
 	if r.Method == "GET" {
-		_, present := r.Query["add"]
-		if present {
+		if _, present := r.Query["add"]; present {
 			users[r.Query["add"]] = user.CreateUser(usersRootDir + "/" + r.Query["add"])
 		}
 
-		_, present = r.Query["user"]
-		if present {
+		if _, present := r.Query["user"]; present {
 			user := users[r.Query["user"]]
-			_, present = r.Query["get"]
-			if present {
+			if _, present := r.Query["get"]; present {
 				return user.Lib.GetModuleDocumentationJSON(r.Query["get"])
 			} else {
 				return user.Lib.GetModuleListJSON()

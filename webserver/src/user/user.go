@@ -17,7 +17,9 @@ func CreateUser(dirPath string) User {
 	}
 
 	exec.Command("mkdir", dirPath).Output()
-	return User{Dir: dirPath}
+	return User{
+		Dir: dirPath,
+		Lib: library.BuildLibrary(dirPath)}
 }
 
 func (u *User) AddModule(modulePath string) {

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	staticBasePath = "/home/martin/go-web/webserver/static/"
+	staticBasePath = "/home/martin/frontend/webserver/static/"
 )
 
 type RequestData struct {
@@ -36,18 +36,22 @@ func HandleRequests(port string) {
 	for _, r := range responses {
 		func(e response) {
 			http.HandleFunc(e.Endpoint, func(w http.ResponseWriter, r *http.Request) {
-				buffer := make([]byte, 4096)
-				n, _ := r.Body.Read(buffer)
-
+				//Read HTTP Query
 				query := make(map[string]string)
 				for k, v := range r.URL.Query() {
 					query[k] = strings.Join(v, "")
 				}
+
+				//Read HTTP Body
+				buffer := make([]byte, 4096)
+				n, _ := r.Body.Read(buffer)
+
 				req := RequestData{
 					Query:  query,
 					Body:   buffer[:n],
 					Method: r.Method,
 				}
+
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(e.Callback(req))
 				fmt.Println(time.Now())

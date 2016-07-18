@@ -13,13 +13,8 @@ func main() {
 		return []byte("{}")
 	})
 
-	api.AddResponse("/api/users", func(r api.RequestData) []byte {
-		return users.HandleUserRequests(r)
-	})
-
-	api.AddResponse("/api/library", func(r api.RequestData) []byte {
-		return users.HandleLibraryRequests(r)
-	})
+	api.AddResponse("/api/users", users.HandleUserRequests)
+	api.AddResponse("/api/library", users.HandleLibraryRequests)
 
 	api.HandleRequests(os.Args[1])
 }
