@@ -1,10 +1,9 @@
 ﻿$(document).ready(function () {
     importModules();
-	importExisting()
+	importModulesE()
 	document.getElementsByName('container1')[0].style.visibility = 'hidden';
 	document.getElementsByName('container2')[0].style.visibility = 'hidden';
 	document.getElementsByName('container3')[0].style.visibility = 'hidden';
-    
 	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 	document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
 })
@@ -44,7 +43,7 @@ function importModules() {
                         myTable += '</tr>'
                         for (i = 0; i < result.variables.length; i++) {
                             //var tooltip = result.variables[i].description
-                            var textInputBox = '<input type="text" value = '+ "default" +' id="' + [i] + '"name="' + [i] + '" />';
+                            var textInputBox = '<input type="text" value = "bolle" id="' + [i] + '"name="' + [i] + '" />';
                             myTable += '<tr>'
                             myTable += '<td>' + result.variables[i].name + '</td>'
                             myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
@@ -64,7 +63,58 @@ function importModules() {
 }
 //result.variables[i].description
 
+function importModulesE() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON(modules, function (result) {
+        console.log(result);
+        var content = ""
+        var content2 = ""
+        for (i = 0; i < result.length; i++) {
+            content2 += "<option value=\"" + i + "\" id=\"" + result[i].id + "\" >" + "E" + result[i].name + "</option>"
+           // content += "<button id=" + resultModules[i].id + ">" + resultModules[i].name + "</button>"
+            
+        }
 
+        $("#Existing").html(content2);
+        for (i = 0; i < result.length; i++) {
+            $("Existing").html(content2);
+        }
+
+        $("#modules").html(content);
+        for (i = 0; i < result.length; i++) {
+            (function (index) {
+                $("#" + result[index].id).click(function () {
+                    $.getJSON(modules + "?get=" + result[index].id, function (result) {
+                        console.log(result)
+                        var myTable = ""
+
+
+                        myTable += '<tr>'
+                        myTable += '<th>' + 'VariabelNavn' + '</th>'
+                        myTable += '<th>' + '' + '</th>'
+                        myTable += '<th>' + 'Verdi' + '</th>'
+                        myTable += '</tr>'
+                        for (i = 0; i < result.variables.length; i++) {
+                            //var tooltip = result.variables[i].description
+                            var textInputBox = '<input type="text" value = "bolle" id="' + [i] + '"name="' + [i] + '" />';
+                            myTable += '<tr>'
+                            myTable += '<td>' + result.variables[i].name + '</td>'
+                            myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
+                            myTable += '<td>' + textInputBox + '</td>'
+                            myTable += '</tr>'
+
+                        }
+                        $("#variablesTable").html(myTable)
+                        //$("#variablesTable").html(variableList)
+
+
+                    })
+                })
+            })(i)
+        }
+    });
+}
+/*
 function importExisting() {
     $.ajaxSetup({ cache: false })
     $.getJSON(modules, function (resultModules) {
@@ -77,6 +127,11 @@ function importExisting() {
     });
 }
 
+*/
+function importVariables() {
+    $.ajaxSetup({ cache: false })
+    $.getJSON()
+}
 
 
 
@@ -112,8 +167,8 @@ function velgMal() {
 	var templateName = e.options[e.selectedIndex].text;
 	var templateId = e.options[e.selectedIndex].value;
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
-
 	console.log(templateName);
+	/*
 	if (templateName == "milestone-1") {
 	    Milestone1();
         
@@ -125,7 +180,7 @@ function velgMal() {
 	   // document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
 	   // document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 	}
-
+*/
 };
 
 function velgMalE() {
@@ -134,20 +189,7 @@ function velgMalE() {
 	var templateName = e.options[e.selectedIndex].text;
 	var templateId = e.options[e.selectedIndex].value;
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
-
 	console.log(templateName);
-	if (templateName == "Existingmilestone-1") {
-	    Milestone1();
-        
-	} 
-	else if (templateName =="Existingmilestone-2") {
-			Milestone2();
-	} 
-	else {
-	    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-	    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
-	}
-
 };
 
 function lagFil() {
@@ -209,7 +251,7 @@ function lagArray() {
         link.style.display = 'block';
     }, false);
 })();
-
+/*
 function Milestone1() {
 
     $.ajaxSetup({ cache: false })
@@ -265,7 +307,7 @@ function Milestone2(){
             varBesk4 = "Variabel for milestone 2";
             $("#innBesk4").html(varBesk4);
 }
-/*
+
 function printFil() {
 	var x = document.getElementById("myFile");
     var txt = "";
