@@ -15,6 +15,7 @@ func main() {
 
 	api.AddResponse("/api/users", requests.HandleUserRequests)
 	api.AddResponse("/api/library", requests.HandleLibraryRequests)
+	api.AddResponse("/api/library/copy", requests.HandleLibraryCopyRequests)
 
 	api.HandleRequests(os.Args[1])
 }

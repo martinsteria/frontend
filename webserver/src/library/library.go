@@ -14,6 +14,16 @@ const (
 
 type Library struct {
 	Modules map[string]*doc.Module
+	RootDir string
+}
+
+func (l *Library) Init(rootDir string) {
+	l.RootDir = rootDir
+	l.Build()
+}
+
+func (l *Library) GetRootDir() string {
+	return l.RootDir
 }
 
 func (l *Library) GetModuleListJSON() []byte {
@@ -38,21 +48,19 @@ func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 	for _, m := range l.Modules {
 		if id == m.Id {
 			moduleJSON, _ = json.Marshal(m)
+			break
 		}
 	}
 
 	return moduleJSON
 }
 
-func BuildLibrary(rootDir string) Library {
-	var lib Library
-	lib.Modules = make(map[string]*doc.Module)
-	files, _ := ioutil.ReadDir(rootDir)
+
+func (l *Library) Build() {
+	l.Modules = make(map[string]doc.Module)
+	files, _ := ioutil.ReadDir(l.RootDir)
 
 	for _, f := range files {
-		lib.Modules[f.Name()].Path = (LibraryModules + "/" + f.Name())
-		lib.Modules[f.Name()].BuildModule()
+		l.Modules[f.Name()] = doc.BuildModule(LibraryModules + "/" + f.Name())
 	}
-
-	return lib
 }
