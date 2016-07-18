@@ -3,18 +3,18 @@ package main
 import (
 	"api"
 	"os"
-	"users"
+	"requests"
 )
 
 func main() {
-	users.Init()
+	requests.Init()
 
 	api.AddResponse("/api", func(api.RequestData) []byte {
 		return []byte("{}")
 	})
 
-	api.AddResponse("/api/users", users.HandleUserRequests)
-	api.AddResponse("/api/library", users.HandleLibraryRequests)
+	api.AddResponse("/api/users", requests.HandleUserRequests)
+	api.AddResponse("/api/library", requests.HandleLibraryRequests)
 
 	api.HandleRequests(os.Args[1])
 }
