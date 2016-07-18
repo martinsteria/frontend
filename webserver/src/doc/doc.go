@@ -178,3 +178,13 @@ func checkError(err error){
 		log.Fatal(err)
 	}
 }
+
+func DeleteKeys(path string, module Module){
+	for i := 0; i < len(module.Variables); i++ {
+		if strings.Contains(module.Variables[i].Name, "access_key") || 
+		strings.Contains(module.Variables[i].Name, "secret_key"){
+			module.Variables[i].Value = ""
+		}
+	}
+	CreateTFvars(path, module.Variables)
+}
