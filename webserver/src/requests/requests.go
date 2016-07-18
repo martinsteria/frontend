@@ -65,14 +65,15 @@ func HandleDeployRequests(r api.RequestData) []byte {
 		if user, present := r.Query["user"]; present {			
 			if module, present := r.Query["module"]; present {
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
-					user.Lib.Modules[module].UpdateModule(usersRootDir + "/" + user + "/" + module, r.Body)
-					
-
+					user.Lib.Modules[module].UpdateModule(r.Body)
+					user.Lib.Modules[module].Deployment.Init(usersRootDir + "/" + user + "/" + module) 
+					user.Lib.Modules[module].Deployment.TerraformCommand(command)
+					return user.Lib.Modules[module].Deployment.Output
 				}
 
 			}
 		}
 	}
-	var a []byte
-	return a
+	
+	return []byte("failed")
 }

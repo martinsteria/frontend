@@ -57,10 +57,11 @@ func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 
 
 func (l *Library) Build() {
-	l.Modules = make(map[string]doc.Module)
+	l.Modules = make(map[string]*doc.Module)
 	files, _ := ioutil.ReadDir(l.RootDir)
 
 	for _, f := range files {
-		l.Modules[f.Name()] = doc.BuildModule(LibraryModules + "/" + f.Name())
+		l.Modules[f.Name()].Init(LibraryModules + "/" + f.Name())
+		l.Modules[f.Name()].BuildModule()
 	}
 }
