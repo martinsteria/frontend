@@ -5,8 +5,8 @@
 	document.getElementsByName('container2')[0].style.visibility = 'hidden';
 	document.getElementsByName('container3')[0].style.visibility = 'hidden';
     
-	//document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
-	//document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
+	document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
 })
 
 var modules = "http://52.169.232.92/api/library"
@@ -44,7 +44,7 @@ function importModules() {
                         myTable += '</tr>'
                         for (i = 0; i < result.variables.length; i++) {
                             //var tooltip = result.variables[i].description
-                            var textInputBox = '<input type="text" id="' + [i] + '"name="' + [i] + '" />';
+                            var textInputBox = '<input type="text" value = '+ "default" +' id="' + [i] + '"name="' + [i] + '" />';
                             myTable += '<tr>'
                             myTable += '<td>' + result.variables[i].name + '</td>'
                             myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
