@@ -1,12 +1,12 @@
 ﻿$(document).ready(function () {
     importModules();
 	importExisting()
-    //document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-  //  document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 //	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
-var modules = "http://tfbrowser.routable.org/api/library"
+var modules = "http://52.169.232.92/api/library"
 
 function importModules() {
     $.ajaxSetup({ cache: false })
@@ -315,7 +315,7 @@ inputBox.onkeyup = function () {
 
 function loggInn() {
 
-   // location.href = "projectcloud.html"
+    location.href = "projectcloud.html"
 
    
     var varBrukernavn = $("#innBrukernavn").value;
