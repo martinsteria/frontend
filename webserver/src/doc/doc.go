@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"terraform"
 )
 
 type Variable struct {
@@ -23,13 +24,14 @@ type Output struct {
 }
 
 type Module struct {
-	Name        string     `json:"name"`
-	Path        string     `json:"path"`
-	Id          string     `json:"id"`
-	Description string     `json:"description"`
-	Provider    string     `json:"provider"`
-	Variables   []Variable `json:"variables"`
-	Outputs     []Output   `json:"outputs"`
+	Name        string               `json:"name"`
+	Path        string               `json:"path"`
+	Id          string               `json:"id"`
+	Description string               `json:"description"`
+	Provider    string               `json:"provider"`
+	Deployment  terraform.Deployment `json:"deployment"`
+	Variables   []Variable           `json:"variables"`
+	Outputs     []Output             `json:"outputs"`
 }
 
 func NewModule(path string) *Module {
