@@ -44,6 +44,9 @@ func (l *Library) GetModuleListJSON() []byte {
 }
 
 func (l *Library) GetModuleDocumentationJSON(id string) []byte {
+	if l.Modules[id] == nil {
+		return []byte("{\"status\": \"Module not found\"}")
+	}
 	var moduleJSON []byte
 
 	type module struct {
