@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
     importModules();
 	importExisting()
-    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
+ //   document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
+ //   document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
 //	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
 })
 
@@ -308,18 +308,14 @@ function velgFil(){
 
     */
 
-var inputBox = document.getElementById('chatinput');
-inputBox.onkeyup = function () {
-    document.getElementById('brukerOut').innerHTML = inputBox.value;
-}
+
 
 function loggInn() {
 
-    location.href = "projectcloud.html"
 
-   
-    var varBrukernavn = $("#innBrukernavn").value;
-    console.log(varBrukernavn)
-    $("#brukerOut").html(varBrukernavn);
+    var varBrukernavn = document.getElementById("chatinput");
+    document.getElementById('brukerOut').innerHTML = varBrukernavn.value;
+
+    
 }
 
