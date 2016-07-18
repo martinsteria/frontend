@@ -5,6 +5,8 @@ import (
 	"library"
 	//"terraform"
 	"users"
+	"encoding/json"
+
 )
 
 var lib *library.Library
@@ -60,13 +62,16 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
+				if users.GetLibrary(user).Modules[module].Deployment.Status == "Running" {
+					return []byte("{\"status:\": \"Running\"}")
+				}
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					users.GetLibrary(user).Modules[module].Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
-					users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
-					return users.GetLibrary(user).Modules[module].Deployment.Output
+					go users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
+					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+					return output
 				}
-
 			}
 		}
 	} else if r.Method == "GET" {
@@ -74,9 +79,10 @@ func HandleDeployRequests(r api.RequestData) []byte {
 			if module, present := r.Query["module"]; present {
 				if users.GetLibrary(user).Modules[module].Deployment.Status == "Running" {
 					return []byte("{\"status:\": \"Running\"}")
-				} else {
-					return users.GetLibrary(user).Modules[module].Deployment.Output
 				}
+
+				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+				return output
 			}
 		}
 	}

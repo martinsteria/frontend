@@ -18,7 +18,9 @@ func (t *Deployment)Init(path string){
 
 func (t *Deployment)TerraformCommand(command string) {
 
+
 	t.Status = "Running"
+	t.Output = []byte("Running")
 	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
