@@ -2,27 +2,19 @@ package main
 
 import (
 	"api"
-	"library"
 	"os"
 	"users"
 )
 
 func main() {
-	library.Init()
+	users.Init()
 
-	api.AddResponse("/api", map[string]func(api.RequestData) []byte{
-		"GET": func(r api.RequestData) []byte {
-			return []byte("{}")
-		},
+	api.AddResponse("/api", func(api.RequestData) []byte {
+		return []byte("{}")
 	})
 
-	api.AddResponse("/api/users", map[string]func(api.RequestData) []byte{
-		"GET": users.HandleUserRequests,
-	})
-
-	api.AddResponse("/api/library", map[string]func(api.RequestData) []byte{
-		"GET": library.HandleLibraryGetRequests,
-	})
+	api.AddResponse("/api/users", users.HandleUserRequests)
+	api.AddResponse("/api/library", users.HandleLibraryRequests)
 
 	api.HandleRequests(os.Args[1])
 }
