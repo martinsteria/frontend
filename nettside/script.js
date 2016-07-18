@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     importModules();
-	importModulesE()
+//	importModulesE()
 	document.getElementsByName('container1')[0].style.visibility = 'hidden';
 	document.getElementsByName('container2')[0].style.visibility = 'hidden';
 	document.getElementsByName('container3')[0].style.visibility = 'hidden';
@@ -34,16 +34,16 @@ function importModules() {
                     $.getJSON(modules + "?get=" + resultModules[index].id, function (result) {
                         console.log(result)
                         var myTable = ""
-
-
+						myTable += "<thead><tr><th>Navn</th><th></th><th>Verdi</th></tr></thead>"
+/*
                         myTable += '<tr>'
                         myTable += '<th>' + 'VariabelNavn' + '</th>'
                         myTable += '<th>' + '' + '</th>'
                         myTable += '<th>' + 'Verdi' + '</th>'
-                        myTable += '</tr>'
+                        myTable += '</tr>' */
                         for (i = 0; i < result.variables.length; i++) {
                             //var tooltip = result.variables[i].description
-                            var textInputBox = '<input type="text" value = "bolle" id="' + [i] + '"name="' + [i] + '" />';
+                            var textInputBox = '<input type="text" value = "default" id="' + [i] + '"name="' + [i] + '" />';
                             myTable += '<tr>'
                             myTable += '<td>' + result.variables[i].name + '</td>'
                             myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
@@ -63,6 +63,7 @@ function importModules() {
 }
 //result.variables[i].description
 
+/*
 function importModulesE() {
     $.ajaxSetup({ cache: false })
     $.getJSON(modules, function (result) {
@@ -87,13 +88,13 @@ function importModulesE() {
                     $.getJSON(modules + "?get=" + result[index].id, function (result) {
                         console.log(result)
                         var myTable = ""
+						myTable += "<thead><tr><th>Navn</th><th></th><th>Verdi</th></tr></thead>"
 
-
-                        myTable += '<tr>'
-                        myTable += '<th>' + 'VariabelNavn' + '</th>'
-                        myTable += '<th>' + '' + '</th>'
-                        myTable += '<th>' + 'Verdi' + '</th>'
-                        myTable += '</tr>'
+ //                       myTable += '<tr>'
+   //                     myTable += '<th>' + 'VariabelNavn' + '</th>'
+     //                   myTable += '<th>' + '' + '</th>'
+       //                 myTable += '<th>' + 'Verdi' + '</th>'
+         //               myTable += '</tr>' 
                         for (i = 0; i < result.variables.length; i++) {
                             //var tooltip = result.variables[i].description
                             var textInputBox = '<input type="text" value = "bolle" id="' + [i] + '"name="' + [i] + '" />';
@@ -114,6 +115,7 @@ function importModulesE() {
         }
     });
 }
+*/
 /*
 function importExisting() {
     $.ajaxSetup({ cache: false })
@@ -148,6 +150,7 @@ function ShowDescription(){
 	});
 }
 
+/*
 function ShowDescriptionE(){
 	$.ajaxSetup({ cache: false })
 	$.getJSON(modules, function (result) {
@@ -159,7 +162,7 @@ function ShowDescriptionE(){
 		document.getElementsByClassName('alert-box notice')[0].style.visibility = 'visible';
 	});
 }
-
+*/
 
 function velgMal() {
 	//empty table "tabelVars"
@@ -183,6 +186,7 @@ function velgMal() {
 */
 };
 
+/*
 function velgMalE() {
 	//empty table "tabelVars"
     var e = document.getElementById("Existing");
@@ -191,9 +195,28 @@ function velgMalE() {
 	document.getElementsByClassName('col-sm-5')[0].style.visibility = 'visible';
 	console.log(templateName);
 };
+*/
 
 function lagFil() {
     document.getElementsByName('container3')[0].style.visibility = 'visible';
+	var myRows = [];
+	var $headers = $("th");
+	var $rows = $("tbody tr").each(function(index) {
+	  $cells = $(this).find("td");
+	  myRows[index] = {};
+	  $cells.each(function(cellIndex) {
+		if (cellIndex ==0){
+		myRows[index]['name'] = $(this).html();
+		}
+		if (cellIndex ==2){
+		var value = document.getElementById(index).value;
+		myRows[index]['value'] = value;
+		}
+	  });    
+	});
+	var myObj = {};
+	myObj.variables = myRows;
+	alert(JSON.stringify(myObj));
 };
 
 function lagArray() {
@@ -355,16 +378,11 @@ function velgFil(){
 
 function loggInn() {
 
-
-    var varBrukernavn = document.getElementById("brukernavnInn");
-    document.getElementById('brukerOut').innerHTML = varBrukernavn.value;
-
-    
-    document.getElementsByName('container0')[0].style.visibility = 'hidden';
-    //Sende brukernavnet til server
-
-
- document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
+	var varBrukernavn = document.getElementById("brukernavnInn");
+	document.getElementById('brukerOut').innerHTML = varBrukernavn.value;
+	document.getElementsByName('container0')[0].style.visibility = 'hidden';
+	//Sende brukernavnet til server
+	document.getElementsByClassName('col-sm-3')[0].style.visibility = 'visible';
 
     
 }
