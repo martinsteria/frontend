@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"library"
 	"os"
@@ -14,7 +15,7 @@ const (
 
 type User struct {
 	RootDir string
-	Lib     library.Library
+	Lib     *library.Library
 }
 
 var users map[string]*User
@@ -25,7 +26,7 @@ func Init() {
 	for _, u := range files {
 		userPath := usersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
-		users[u.Name()].Lib.Init(userPath)
+		users[u.Name()].Lib = library.NewLibrary(userPath)
 	}
 }
 
@@ -41,11 +42,13 @@ func AddUser(name string) {
 }
 
 func AddModule(user string, modulePath string) {
-	exec.Command("cp", "-r", modulePath, users[user].RootDir)
+	fmt.Println("MOD:", modulePath)
+	fmt.Println("USER:", users[user].RootDir)
+	exec.Command("cp", "-r", modulePath, users[user].RootDir).Output()
 	users[user].Lib.Build()
 }
 
-func GetLibrary(user string) library.Library {
+func GetLibrary(user string) *library.Library {
 	return users[user].Lib
 }
 

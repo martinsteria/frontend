@@ -17,9 +17,10 @@ type Library struct {
 	RootDir string
 }
 
-func (l *Library) Init(rootDir string) {
-	l.RootDir = rootDir
+func NewLibrary(rootDir string) *Library {
+	l := &Library{RootDir: rootDir}
 	l.Build()
+	return l
 }
 
 func (l *Library) GetRootDir() string {
@@ -45,23 +46,34 @@ func (l *Library) GetModuleListJSON() []byte {
 func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 	var moduleJSON []byte
 
-	for _, m := range l.Modules {
-		if id == m.Id {
-			moduleJSON, _ = json.Marshal(m)
-			break
-		}
+	type module struct {
+		Name        string         `json:"name"`
+		Id          string         `json:"id"`
+		Description string         `json:"description"`
+		Provider    string         `json:"provider"`
+		Variables   []doc.Variable `json:"variables"`
+		Outputs     []doc.Output   `json:"outputs"`
 	}
 
+	m := module{
+		Name:        l.Modules[id].Name,
+		Id:          l.Modules[id].Id,
+		Description: l.Modules[id].Description,
+		Provider:    l.Modules[id].Provider,
+		Variables:   l.Modules[id].Variables,
+		Outputs:     l.Modules[id].Outputs,
+	}
+
+	moduleJSON, _ = json.Marshal(m)
 	return moduleJSON
 }
-
 
 func (l *Library) Build() {
 	l.Modules = make(map[string]*doc.Module)
 	files, _ := ioutil.ReadDir(l.RootDir)
 
 	for _, f := range files {
-		l.Modules[f.Name()].Init(LibraryModules + "/" + f.Name())
+		l.Modules[f.Name()] = doc.NewModule(l.RootDir + "/" + f.Name())
 		l.Modules[f.Name()].BuildModule()
 	}
 }
