@@ -77,10 +77,7 @@ function importExisting() {
     });
 }
 
-function importVariables() {
-    $.ajaxSetup({ cache: false })
-    $.getJSON()
-}
+
 
 
 
