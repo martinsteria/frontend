@@ -1,12 +1,12 @@
 ﻿$(document).ready(function () {
     importModules();
 	importExisting()
-    document.getElementsByClassName('col-sm-5')[0].style.visibility = 'hidden';
-    document.getElementsByClassName('col-sm-3')[0].style.visibility = 'hidden';
-	//document.getElementsByClassName('container1')[0].style.visibility = 'hidden';
-	document.getElementsByClassName('col-sm-4')[0].style.visibility = 'hidden';
-	document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
-	document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+	document.getElementsByName('container1')[0].style.visibility = 'hidden';
+	document.getElementsByName('container2')[0].style.visibility = 'hidden';
+	document.getElementsByName('container3')[0].style.visibility = 'hidden';
+    
+	//document.getElementsByClassName('alert-box notice')[0].style.visibility = 'hidden';
+	//document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
 })
 
 var modules = "http://52.169.232.92/api/library"
@@ -154,7 +154,7 @@ function velgMalE() {
 };
 
 function lagFil() {
-    document.getElementsByClassName('col-sm-4')[0].style.visibility = 'visible';
+    document.getElementsByName('container3')[0].style.visibility = 'visible';
 };
 
 function lagArray() {
@@ -320,7 +320,8 @@ function loggInn() {
     var varBrukernavn = document.getElementById("brukernavnInn");
     document.getElementById('brukerOut').innerHTML = varBrukernavn.value;
 
-
+    
+    document.getElementsByName('container0')[0].style.visibility = 'hidden';
     //Sende brukernavnet til server
 
 
