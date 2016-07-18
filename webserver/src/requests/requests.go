@@ -4,9 +4,8 @@ import (
 	"api"
 	"library"
 	//"terraform"
-	"users"
 	"encoding/json"
-
+	"users"
 )
 
 var lib *library.Library
@@ -22,14 +21,16 @@ func HandleUserRequests(r api.RequestData) []byte {
 			if module, present := r.Query["module"]; present {
 				return users.GetLibrary(user).GetModuleDocumentationJSON(module)
 			} else {
-				return users.GetLibrary(user).GetModuleListJSON()
+				if lib := users.GetLibrary(user); lib != nil {
+					return lib.GetModuleListJSON()
+				}
+				return []byte("{\"status\": \"User not found\"}")
 			}
 		}
 
 	} else if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
-			users.AddUser(user)
-			return []byte("{\"status\": \"success\"}")
+			return users.AddUser(user)
 		}
 	}
 
@@ -50,8 +51,7 @@ func HandleLibraryCopyRequests(r api.RequestData) []byte {
 	if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
-				users.AddModule(user, lib.GetRootDir()+"/"+module)
-				return []byte("{\"status:\": \"success\"}")
+				return users.AddModule(user, lib.GetRootDir()+"/"+module)
 			}
 		}
 	}
@@ -69,19 +69,15 @@ func HandleDeployRequests(r api.RequestData) []byte {
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					users.GetLibrary(user).Modules[module].Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
 					go users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
-					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
 					return output
 				}
 			}
 		}
 	} else if r.Method == "GET" {
-		if user, present := r.Query["user"]; present {			
+		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
-				if users.GetLibrary(user).Modules[module].Deployment.Status == "Running" {
-					return []byte("{\"status:\": \"Running\"}")
-				}
-
-				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
 				return output
 			}
 		}
@@ -89,4 +85,3 @@ func HandleDeployRequests(r api.RequestData) []byte {
 
 	return []byte("{\"status:\": \"failed\"}")
 }
-

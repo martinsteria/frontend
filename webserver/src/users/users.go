@@ -2,7 +2,6 @@ package users
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"library"
 	"os"
@@ -30,25 +29,40 @@ func Init() {
 	}
 }
 
-func AddUser(name string) {
+func AddUser(name string) []byte {
 	rootDir := UsersRootDir + "/" + name
 	if _, err := os.Stat(rootDir); err == nil {
-		return
+		return []byte("{\"status\": \"User already exists\"}")
 	}
 
 	exec.Command("mkdir", rootDir).Output()
 	users[name] = &User{RootDir: rootDir}
+	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
+
+	return []byte("{\"status\": \"success\"}")
 }
 
-func AddModule(user string, modulePath string) {
-	fmt.Println("MOD:", modulePath)
-	fmt.Println("USER:", users[user].RootDir)
+func AddModule(user string, modulePath string) []byte {
+	if _, present := users[user]; !present {
+		return []byte("{\"status\": \"User not found\"}")
+	}
+
+	if _, err := os.Stat(modulePath); err != nil {
+		if os.IsNotExist(err) {
+			return []byte("{\"status\": \"Module not found\"}")
+		}
+	}
+
 	exec.Command("cp", "-r", modulePath, users[user].RootDir).Output()
 	users[user].Lib.Build()
+	return []byte("{\"status\": \"success\"}")
 }
 
 func GetLibrary(user string) *library.Library {
+	if users[user] == nil {
+		return nil
+	}
 	return users[user].Lib
 }
 
