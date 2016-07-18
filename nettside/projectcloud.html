@@ -118,8 +118,22 @@
       <p>Template Deployment</p>
     </div>
 
+
+    <div class="col-sm-2" id ="container0" >
+        <h3>0. Logg Inn</h3>
+        <p>Logg inn på din konto. Finnes ikke kontoen opprettes en ny</p>
+
+        <input type='text' name='fname' class='chatinput' id='chatinput'>
+        <div class='printchatbox' id='printchatbox'></div>
+        
+        <input id="loggInn" type="button" value="Logg Inn" onclick = loggInn() />
+        <p id ="brukerOut">her</p>
+    </div>
+
+
     <div class="container">
     <div class="row">
+
     <div class="col-sm-3" id ="container1" >
         <h3>1. Velg Mal</h3>
         <p>Velg ønsket mal for din infrastruktur.</p>
@@ -141,6 +155,9 @@
         <div id ="modules"></div>
 		
 		<div class="alert-box notice" id="Description"></div>
+
+
+
     </div>
 	
     <div class="col-sm-5" id ="container2">
@@ -202,7 +219,7 @@
 
     </div>
 
-    <div class="col-sm-4" id ="container3">
+    <div class="col-sm-3" id ="container3">
       <h3>3. Rull ut</h3>
       <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
       <p>
