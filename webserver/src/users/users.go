@@ -6,6 +6,7 @@ import (
 	"library"
 	"os"
 	"os/exec"
+	"terraform"
 )
 
 const (
@@ -15,6 +16,7 @@ const (
 type User struct {
 	RootDir string
 	Lib     *library.Library
+	Deploy *terraform.Deployment
 }
 
 var users map[string]*User
@@ -39,6 +41,7 @@ func AddUser(name string) []byte {
 	users[name] = &User{RootDir: rootDir}
 	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
+	users[name].Deploy.Init(UsersRootDir)
 
 	return []byte("{\"status\": \"success\"}")
 }
@@ -64,6 +67,13 @@ func GetLibrary(user string) *library.Library {
 		return nil
 	}
 	return users[user].Lib
+}
+
+func GetDeployStruct(user string) *terraform.Deployment {
+	if users[user] == nil {
+		return nil
+	}
+	return users[user].Deploy
 }
 
 func GetUserListJSON() []byte {
