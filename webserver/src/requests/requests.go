@@ -69,7 +69,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					users.GetLibrary(user).Modules[module].Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
 					go users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
-					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
 					return output
 				}
 			}
@@ -81,7 +81,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 					return []byte("{\"status:\": \"Running\"}")
 				}
 
-				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment.Output)
+				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
 				return output
 			}
 		}
