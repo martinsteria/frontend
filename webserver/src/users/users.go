@@ -41,7 +41,7 @@ func AddUser(name string) []byte {
 	users[name] = &User{RootDir: rootDir}
 	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
-	users[name].Deploy.Init(UsersRootDir)
+	users[name].Deploy = terraform.NewDeployment(UsersRootDir)
 
 	return []byte("{\"status\": \"success\"}")
 }
