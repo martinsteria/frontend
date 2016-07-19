@@ -6,12 +6,19 @@ var deployment = "http://52.169.232.92/api/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
+    $("#usernameInput").focus();
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
     $("#variables-view").hide()
     $("#deployment-view").hide()
     $("#description").hide()
-	  //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+    //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+
+    //Trykker på "logg inn" knappen hvis enter trykkes på i inputbox
+    $('#usernameInput').keypress(function (e) {
+        if (e.keyCode == 13)
+            $('#loginBtn').click();
+    });
 })
 
 
