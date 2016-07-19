@@ -66,10 +66,14 @@ func HandleDeployRequests(r api.RequestData) []byte {
 					return []byte("{\"status:\": \"Running\"}")
 				}
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
-					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
-					users.GetLibrary(user).Modules[module].Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
-					go users.GetLibrary(user).Modules[module].Deployment.TerraformCommand(command)
-					output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
+					usr := users.GetLibrary(user).Modules[module]
+					usr.UpdateModule(r.Body)
+					usr.Deployment.Init(users.UsersRootDir + "/" + user + "/" + module)
+					go usr.Deployment.TerraformCommand(command)
+					usr.Deployment.BufferRead <- 1
+					output, _ := json.Marshal(usr.Deployment)
+					usr.Deployment.BufferRead <- 1
+					<- usr.Deployment.Deleted
 					return output
 				}
 			}
@@ -77,7 +81,11 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	} else if r.Method == "GET" {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
-				output, _ := json.Marshal(users.GetLibrary(user).Modules[module].Deployment)
+				deploy := users.GetLibrary(user).Modules[module].Deployment
+				deploy.BufferRead <- 1
+				output, _ := json.Marshal(deploy)
+				deploy.BufferRead <- 1
+				<- deploy.Deleted
 				return output
 			}
 		}

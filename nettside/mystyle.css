@@ -1,4 +1,11 @@
     <style type="text/css">
+
+        span {
+            display: inline-block;
+        }
+        img {
+            width: 40%;
+        }
         #Select1 {
             height: 11px;
             width: 213px;

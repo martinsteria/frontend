@@ -16,15 +16,15 @@ var deployment = apiRoot + "/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
-    $("#usernameInput").focus();
+    $("#usernameInput").focus(); 
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
     $("#variables-view").hide()
     $("#deployment-view").hide()
     $("#description").hide()
-    //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+    $("#newUser").hide()
 
-    //Trykker på "logg inn" knappen hvis enter trykkes på i inputbox
+    //"logg inn" knapp aktiveres ved å trykke enter i inputbox
     $('#usernameInput').keypress(function (e) {
         if (e.keyCode == 13)
             $('#loginBtn').click();
@@ -56,20 +56,32 @@ function logIn() {
         importLibraryModules(modules)
         $("#library-view").fadeIn("slow")
     })
+    var content = "<span>" + "Du er logget in som " + user + "" + "</span>";
+    $("#bruker").html(content)
+    $("#bruker").show()
 }
 
 function makeUser(user) {
-	console.log("make new user")
+    console.log("make new user")
+    $.post({
+        url: users + "?user=" + user,
+        success: function (result) {
+            console.log("new User: " + user)
+            var content= "<span>" + "Ny Bruker" + "</span><br>" + "Ny bruker opprettet for "+ user;
+            $("#newUser").html(content)
+            $("#newUser").show()
+        }
+    })
 }
 
 function importLibraryModules(path) {
     $.getJSON(path, function (resultModules) {
         var content = ""
+        if (resultModules != null){
         content += "<option selected disabled hidden>Biblioteksmoduler...</option>"
         for (i = 0; i < resultModules.length; i++) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
-
         $("#library").html(content);
         $("#library").change(function() {
             module = $("#library option:selected").text()
@@ -77,7 +89,7 @@ function importLibraryModules(path) {
             showModule(path +"?module=" + module)
             $("#variables-view").fadeIn("slow")
         })
-
+    }
     });
 }
 
@@ -104,8 +116,10 @@ function importUserModules(path, user) {
 
 function showModule(path) {
     $.getJSON(path, function(result) {
-        var content = ""
-        $("#moduleName").html(result.name)
+        var content = "2. " //evt. 2. Set variabler for..
+        var name = result.name
+        content += name.charAt(0).toUpperCase() + name.slice(1);
+        $("#moduleName").html(content)
         $("#moduleDescription").html(result.description)
         var myTable = ""
 				myTable += "<thead><tr><th>Navn</th><th>Verdi</th></tr></thead>"

@@ -13,9 +13,10 @@
 </head>
 <body>
     <div class="jumbotron text-center">
-      <h1>Cloud Solution</h1>
-      <p>Template Deployment</p>
+      <span><img src="soprasterialogo.png" alt="" style="" onload="this.width/=2;"></span>
+      <h2>Cloud Deployment Solution</h2>
     </div>
+
 
 
     <div class="container" id="login-view">
@@ -50,14 +51,16 @@
           <select class="form-control" id="existing"></select>
 	        <br>
 	        <br>
-		      <div class="alert-box notice" id="description"></div>
+              <div class="alert-box notice" id="bruker"></div>
+            <br>
+		      <div class="alert-box notice" id="newUser"></div>
         </div>
 	
         <div class="col-sm-6" id ="variables-view">
-          <h3>2. Rediger Variabler</h3>
-          <p>Rediger de ulike variablene for den ønskede infrastrukturen.</p>
-       
-          <h4 id="moduleName"></h4>
+ <!--        <h3 id="modulName">2. Rediger Variabler</h3>
+          <p id="modulDescription">Rediger de ulike variablene for den ønskede infrastrukturen.</p>
+       -->
+          <h3 id="moduleName"></h3>
           <p id="moduleDescription"></p>
 	        <table class="table" id="variablesTable"></table>
           <button class="btn btn-primary btn-block" id="showDeployment">Rull ut</button>
