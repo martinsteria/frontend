@@ -1,83 +1,121 @@
 package terraform
 
-import (
-	//"log"
-	"os/exec"
-	"io"
-	"bytes"
-	"fmt"
-)
+import (     
+	//"log"     
+	"os/exec"    
+	"io"      
+	"bytes"     
+	"strings"
+	"time" 
+	)
 
 type Deployment struct {
 	Status         	string `json:"status"`
 	Path         	string `json:"path"`
-	Output  		[]byte `json:"description"`
+	Output  		[]byte `json:"output"`
 	buf 			bytes.Buffer
+	outputChannel chan string
+	BufferRead chan int
+	Deleted chan int
 }
 
-func (t *Deployment)Init(path string){
+func (t *Deployment) Init(path string) {
 	t.Path = path
+	t.outputChannel = make(chan string, 1)
+	t.BufferRead = make(chan int, 1)
+	t.Deleted = make(chan int, 1)
+}
+	
+func (t *Deployment) readOutput(){
+	tempOutput := ""
+	for{
+		temp := t.buf.String()
+		if !strings.Contains(tempOutput, temp) {
+			temp = strings.Replace(temp, tempOutput, "", -1)
+			tempOutput += temp
+			t.outputChannel <- temp
+		
+		if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
+			//t.Output = []byte(tempOutput)
+			t.Status = ""
+			return
+		}
+		}
+	}
+
 }
 
-func (t *Deployment) Print(){
-
-		var last bytes.Buffer
-		for{
-			if(t.buf.String() != last.String()) {
-				//t.buf.UnreadByte()
-				t.Output = t.buf.Bytes()
-				t.buf.Reset()
-				last = t.buf
-				fmt.Println(string(t.Output))
-
-				if t.Status != "Running" {
+func (t *Deployment) getOutput(){
+	out := ""
+	temp := ""
+	for{
+		select{
+			case out = <-t.outputChannel:
+				temp += out
+				t.Output = []byte(temp)
+				if strings.Contains(temp, "Finished") {
 					return
 				}
-			}
+				out = ""
+			case <- t.BufferRead:
+				<-t.BufferRead
+				t.Output = []byte("")
+				temp = ""
+				t.Deleted <- 1
+			case <- time.After(30*time.Second):
+				return
+
 		}
 
-} 
+	}
+}
 
 func (t *Deployment)TerraformCommand(command string) {
 
-
 	t.Status = "Running"
-	t.Output = []byte("Running")
+
 	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
 
 
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
 		cmd.Dir = t.Path
-		//out, _ := cmd.CombinedOutput()
-    	cmd.Run()
+		stdout, _ := cmd.StdoutPipe()
+		stderr, _ := cmd.StderrPipe()
+		cmd.Start()
 
-		//t.Output = out
+		defer cmd.Wait()
+		go t.readOutput()
+		go t.getOutput()
+
+		io.Copy(&t.buf, stdout)
+		io.Copy(&t.buf, stderr)
+
+		t.buf.Write([]byte("\nFinished"))
 		return
-	}
+	} 
 
 	cmd := exec.Command("terraform", command)
 	cmd.Dir = t.Path
-
 	stdout, _ := cmd.StdoutPipe()
+	stderr, _ := cmd.StderrPipe()
 	cmd.Start()
-	defer cmd.Wait()
+	
 
+	defer cmd.Wait()
+	go t.readOutput()
+	go t.getOutput()
 
 	io.Copy(&t.buf, stdout)
+	io.Copy(&t.buf, stderr)
 
-	//out, err := cmd.CombinedOutput()
-
-	/*if err != nil {
-		log.Fatal(err)
-	}*/
-	t.Status = ""
-	//t.Output = out
+	t.buf.Write([]byte("Finished"))
 
 	//DELETE KEYS?????
 }
 
-func (t *Deployment)getModules() {
+
+func (t *Deployment) getModules() {
 
 	init := exec.Command("terraform", "get")
 	init.Dir = t.Path
