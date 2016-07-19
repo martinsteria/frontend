@@ -2,76 +2,74 @@
 <html lang="en">
 <head>
     
-    <title></title>
+	<title></title>
 	<meta charset="utf-8" />
-    <style type="text/css">
-        #Select1 {
-            height: 11px;
-            width: 213px;
-        }
-        #TextArea1 {
-            height: 75px;
-        }
-        .auto-style4 {
-            width: 90px;
-        }
-        .auto-style5 {
-            width: 90px;
-            height: 20px;
-        }
-        .auto-style6 {
-            width: 101px;
-        }
-		table {
-			border-collapse: separate;
-			empty-cells: hide;
-		}
-		.alert-box {
-			color:#555;
-			border-radius:2px;
-			font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
-			padding:10px 10px 10px 10px;
-			margin:0px;
-		}
-		.alert-box span {
-			font-weight:bold;
-		}
-		.notice {
-			background:#e3f7fc url('images/notice.png') no-repeat 10px 50%;
-			border:1px solid #8ed9f6;
-		}
-    </style>
-    
-
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="mystyle.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 </head>
-
-    <body>
-
+<body>
     <div class="jumbotron text-center">
       <h1>Cloud Solution</h1>
       <p>Template Deployment</p>
     </div>
 
-    <div class="container">
-    <div class="row">
-    <div class="col-sm-3" id ="container1" >
+
+    <div class="col-sm-2" id="login-view">
         <h3>Logg Inn</h3>
-        <p>Skriv inn ditt brukernavn</p>
-        <input id="burkerInn" type="text" name ="fname" class ="chatinput"/>
-        <input id="knloggInn" type="button" value="Logg inn" onclick="loggInn()" />
-        <div id ="brukerOut" class ="printchatbox" typeof="text"></div>
+        <p>Logg inn på din konto. Finnes ikke kontoen opprettes en ny</p>
 
-
+        <input type="text" name="fname" class="chatinput" id="usernameInput">
+        
+        <input id="loginBtn" type="button" value="Logg Inn" />
     </div>
-        </div>
-        </div>
 
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3" id ="library-view">
+          <h3>1. Velg Mal</h3>
+          <p>Velg ønsket mal for din infrastruktur.</p>
 
-         <script src="script.js"></script>
+          <select id="library" multiple ="multiple"></select> 
+          <!--<input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" /> -->
+	        <p id="if"></p>
+          
+	        <br>
+	        <br>
+		      <p>Din eksisterende infrastruktur</p>
+          <select id="existing" multiple ="multiple" onchange="ShowDescriptionE();velgMalE();importModulesE()" ></select>
+	        <br>
+	        <br>
+		      <div class="alert-box notice" id="description"></div>
+        </div>
+	
+        <div class="col-sm-5" id ="variables-view">
+          <h3>2. Rediger Variabler</h3>
+          <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
+       
+	        <table id ="variablesTable"></table>
+          <button id="showDeployment">Neste</button>
+        </div>
+        
+        <div class="col-sm-3" id ="deployment-view">
+          <h3>3. Rull ut</h3>
+          <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
+          <p>
+            <input id="planBtn" type="button" value="Plan" />&nbsp;&nbsp;&nbsp;
+            <input id="applyBtn" type="button" value="Apply" />&nbsp;&nbsp;&nbsp;
+            <input id="destroyBtn" type="button" value="Destroy"/>
+	        </p>
+	        <div class="alert-box output" id="Output"></div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <hr />
+    <script src="script.js"></script>
+    
 </body>
 </html>
