@@ -6,7 +6,7 @@ var deployment = "http://52.169.232.92/api/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
-    $("#usernameInput").focus();
+    $("#usernameInput").focus(); 
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
     $("#variables-view").hide()
@@ -14,7 +14,7 @@ $(document).ready(function () {
     $("#description").hide()
     //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
 
-    //Trykker på "logg inn" knappen hvis enter trykkes på i inputbox
+    //"logg inn" knapp aktiveres ved å trykke enter i inputbox
     $('#usernameInput').keypress(function (e) {
         if (e.keyCode == 13)
             $('#loginBtn').click();
