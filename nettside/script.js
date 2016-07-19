@@ -92,8 +92,10 @@ function importLibraryModules(path, meny, x) {
 
 function showModule(path) {
     $.getJSON(path, function(result) {
-        var content = ""
-        $("#moduleName").html(result.name)
+        var content = "2. " //evt. 2. Set variabler for..
+        var name = result.name
+        content += name.charAt(0).toUpperCase() + name.slice(1);
+        $("#moduleName").html(content)
         $("#moduleDescription").html(result.description)
         var myTable = ""
 				myTable += "<thead><tr><th>Navn</th><th>Verdi</th></tr></thead>"
