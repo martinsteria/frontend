@@ -36,7 +36,7 @@ function logIn() {
 				}
 			}
 			if (e == true) {
-				getUserModules(user);
+			    importLibraryModules(users + "?user=" + user, "existing", "&");
 			}
 			else {
 				makeUser(user);
@@ -45,50 +45,36 @@ function logIn() {
 	})
     $("#login-view").hide()
     $("#library-view").show()
-    importLibraryModules()
+    importLibraryModules(modules, "library", "?")
 }
-
-function getUserModules(user) {
-    console.log("get modules")
-    console.log(users + "?user=" + user)
-    $.getJSON(users+"?user="+user , function (userModules) {
-        console.log(userModules);
-        var content = ""
-        for (i = 0; i < userModules.length; i++) {
-            content += "<option value=\"" + i + "\" id=\"" + userModules[i].id + "\" >" + userModules[i].name + "</option>"
-        }
-
-        $("#existing").html(content);
-        $("#existing").click(function() {
-            $("#variables-view").show()
-            module = $("#existing option:selected").text()
-            showModule(users + "?user=" + user + "&module="+ module);
-        });
-
-    });   
-        }
 
 function makeUser(user) {
 	console.log("make new user")
 }
 
-function importLibraryModules() {
-    $.getJSON(modules, function (resultModules) {
+/*
+x er enten lik '&' eller '?'
+users + "?user=" + user + "&module=" + module
+users + "?user=" + user + "?module=" + module
+*/
+function importLibraryModules(path, meny, x) {
+    $.getJSON(path, function (resultModules) {
         console.log(resultModules);
         var content = ""
         for (i = 0; i < resultModules.length; i++) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
 
-        $("#library").html(content);
-        $("#library").click(function() {
+        $("#"+meny).html(content);
+        $("#"+meny).click(function() {
             $("#variables-view").show()
-            module = $("#library option:selected").text()
-            showModule(modules + "?module=" + module)
+            module = $("#"+meny+" option:selected").text()
+            showModule(path + x +"module=" + module)
         })
 
     });
 }
+
 
 function showModule(path) {
     $.getJSON(path, function(result) {
