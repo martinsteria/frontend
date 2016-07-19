@@ -11,7 +11,13 @@ $(document).ready(function () {
     $("#variables-view").hide()
     $("#deployment-view").hide()
     $("#description").hide()
-	  //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+    //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+
+    //Trykker på "logg inn" knappen hvis enter trykkes på i inputbox
+    $('#usernameInput').keypress(function (e) {
+        if (e.keyCode == 13)
+            $('#loginBtn').click();
+    });
 })
 
 
