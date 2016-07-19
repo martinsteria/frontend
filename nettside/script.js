@@ -12,7 +12,7 @@ $(document).ready(function () {
     $("#variables-view").hide()
     $("#deployment-view").hide()
     $("#description").hide()
-    //document.getElementsByClassName('alert-box output')[0].style.visibility = 'hidden';
+    $("#newUser").hide()
 
     //"logg inn" knapp aktiveres ved å trykke enter i inputbox
     $('#usernameInput').keypress(function (e) {
@@ -47,6 +47,9 @@ function logIn() {
         importLibraryModules(modules, "library", "?")
         $("#library-view").fadeIn("slow")
     })
+    var content = "<span>" + "Du er logget in som " + user + "" + "</span>";
+    $("#bruker").html(content)
+    $("#bruker").show()
 }
 
 function makeUser(user) {
@@ -54,7 +57,10 @@ function makeUser(user) {
     $.post({
         url: users + "?user=" + user,
         success: function (result) {
-            console.log("new User: "+ user)
+            console.log("new User: " + user)
+            var content= "<span>" + "Ny Bruker" + "</span><br>" + "Ny bruker opprettet for "+ user;
+            $("#newUser").html(content)
+            $("#newUser").show()
         }
     })
 }
