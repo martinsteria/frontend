@@ -6,6 +6,7 @@ var deployment = "http://52.169.232.92/api/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
+    $("#usernameInput").focus();
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
     $("#variables-view").hide()
