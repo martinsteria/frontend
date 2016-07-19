@@ -70,7 +70,7 @@ func (t *Deployment) getOutput(){
 	}
 }
 
-func (t *Deployment)TerraformCommand(command string) {
+func (t *Deployment)TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
 
@@ -79,7 +79,7 @@ func (t *Deployment)TerraformCommand(command string) {
 
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
-		cmd.Dir = t.Path
+		cmd.Dir = path
 		stdout, _ := cmd.StdoutPipe()
 		stderr, _ := cmd.StderrPipe()
 		cmd.Start()
@@ -96,7 +96,7 @@ func (t *Deployment)TerraformCommand(command string) {
 	} 
 
 	cmd := exec.Command("terraform", command)
-	cmd.Dir = t.Path
+	cmd.Dir = path
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 	cmd.Start()
