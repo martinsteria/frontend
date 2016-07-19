@@ -49,7 +49,13 @@ function logIn() {
 }
 
 function makeUser(user) {
-	console.log("make new user")
+    console.log("make new user")
+    $.post({
+        url: users + "?user=" + user,
+        success: function (result) {
+            console.log("new User: "+ user)
+        }
+    })
 }
 
 /*
@@ -61,17 +67,18 @@ function importLibraryModules(path, meny, x) {
     $.getJSON(path, function (resultModules) {
         console.log(resultModules);
         var content = ""
-        for (i = 0; i < resultModules.length; i++) {
-            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
-        }
+        if (resultModules != null){
+            for (i = 0; i < resultModules.length; i++) {
+                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+            }
 
-        $("#"+meny).html(content);
-        $("#"+meny).click(function() {
+            $("#"+meny).html(content);
+            $("#"+meny).click(function() {
             $("#variables-view").show()
             module = $("#"+meny+" option:selected").text()
             showModule(path + x +"module=" + module)
         })
-
+    }
     });
 }
 
