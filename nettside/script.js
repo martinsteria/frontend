@@ -24,25 +24,25 @@ $(document).ready(function () {
 
 function logIn() {
     user = $("#usernameInput").val()
-	$.get({
-		url: users,
-		success: function(result) {
-			console.log(result)
-			var e = false;
-			for (i=0; i< result.length ; i++) {
-				console.log(result[i]+"="+user);
-				if (user == result[i]){
-					e = true;
-				}
-			}
-			if (e == true) {
-			    importLibraryModules(users + "?user=" + user, "existing", "&");
-			}
-			else {
-				makeUser(user);
-			}
-		}
-	})
+	  $.get({
+		    url: users,
+		    success: function(result) {
+			      console.log(result)
+			      var e = false;
+			      for (i=0; i< result.length ; i++) {
+				        console.log(result[i]+"="+user);
+				        if (user == result[i]){
+					          e = true;
+				        }
+			      }
+			      if (e == true) {
+			          importLibraryModules(users + "?user=" + user, "existing", "&");
+			      }
+			      else {
+				        makeUser(user);
+			      }
+		    }
+	  })
     $("#login-view").fadeOut("slow", function() {
         importLibraryModules(modules, "library", "?")
         $("#library-view").fadeIn("slow")
@@ -67,19 +67,11 @@ function importLibraryModules(path, meny, x) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
 
-<<<<<<< HEAD
-        $("#library").html(content);
-        $("#library").change(function() {
-            module = $("#library option:selected").text()
-            showModule(modules + "?module=" + module)
-            $("#variables-view").fadeIn("slow")
-=======
         $("#"+meny).html(content);
-        $("#"+meny).click(function() {
-            $("#variables-view").show()
+        $("#"+meny).change(function() {
             module = $("#"+meny+" option:selected").text()
             showModule(path + x +"module=" + module)
->>>>>>> e51d02440b8fd97f9460cbb5065b1c26fe602703
+            $("#variables-view").fadeIn("slow")
         })
 
     });
