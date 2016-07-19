@@ -17,9 +17,37 @@ $(document).ready(function () {
 
 function logIn() {
     user = $("#usernameInput").val()
+	$.get({
+		url: users,
+		success: function(result) {
+			console.log(result)
+			var e = false;
+			for (i=0; i< result.length ; i++) {
+				console.log(result[i]+"="+user);
+				if (user == result[i]){
+					e = true;
+				}
+			}
+			if (e == true) {
+				getUserModules(user);
+			}
+			else {
+				makeUser(user);
+			}
+			
+		}
+	})
     $("#login-view").hide()
     $("#library-view").show()
     importLibraryModules()
+}
+
+function getUserModules(user) {
+	console.log("get modules")
+}
+
+function makeUser(user) {
+	console.log("make new user")
 }
 
 function importLibraryModules() {
