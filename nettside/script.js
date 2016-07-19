@@ -41,7 +41,6 @@ function logIn() {
 			else {
 				makeUser(user);
 			}
-			
 		}
 	})
     $("#login-view").hide()
@@ -50,8 +49,24 @@ function logIn() {
 }
 
 function getUserModules(user) {
-	console.log("get modules")
-}
+    console.log("get modules")
+    console.log(users + "?user=" + user)
+    $.getJSON(users+"?user="+user , function (userModules) {
+        console.log(userModules);
+        var content = ""
+        for (i = 0; i < userModules.length; i++) {
+            content += "<option value=\"" + i + "\" id=\"" + userModules[i].id + "\" >" + userModules[i].name + "</option>"
+        }
+
+        $("#existing").html(content);
+        $("#existing").click(function() {
+            $("#variables-view").show()
+            module = $("#existing option:selected").text()
+            showModule(users + "?user=" + user + "&module="+ module);
+        });
+
+    });   
+        }
 
 function makeUser(user) {
 	console.log("make new user")
