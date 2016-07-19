@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     
@@ -18,11 +18,24 @@
     </div>
 
 
-    <div class="col-sm-2" id="login-view">
-        <h3>Logg Inn</h3>
-        <p>Logg inn på din konto. Finnes ikke kontoen opprettes det en ny.</p>
-        <input type="text" name="fname" class="chatinput" id="usernameInput">
-        <input id="loginBtn" type="button" value="Logg Inn" />
+
+    <div class="container" id="login-view">
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+          <h3>Logg Inn</h3>
+          <p>Logg inn på din konto. Finnes ikke kontoen opprettes en ny</p>
+          
+          <label>Brukernavn</label>
+          <table class="table">
+            <tr>
+              <td><input type="text" class="form-control" id="usernameInput"></td>
+              <td><button type="button" class="btn btn-default" id="loginBtn">Logg inn</button></td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-sm-4"></div>
+      </div>
     </div>
 
     <div class="container">
@@ -31,36 +44,50 @@
           <h3>1. Velg Mal</h3>
           <p>Velg ønsket mal for din infrastruktur.</p>
 
-          <select id="library" multiple ="multiple"></select> 
-          <!--<input id="Button1" type="button" value="Lag Ny" onclick="velgMal()" /> -->
-	        <p id="if"></p>
-          
+          <select class="form-control" id="library"> </select>
 	        <br>
 	        <br>
 		      <p>Din eksisterende infrastruktur</p>
-          <select id="existing" multiple ="multiple" onchange="ShowDescriptionE();velgMalE();importModulesE()" ></select>
+          <select id="existing" multiple ="multiple" ></select>
 	        <br>
 	        <br>
 		      <div class="alert-box notice" id="description"></div>
         </div>
 	
-        <div class="col-sm-5" id ="variables-view">
+        <div class="col-sm-6" id ="variables-view">
           <h3>2. Rediger Variabler</h3>
-          <p>Rediger de ulike variablene for den ønskede infrastrukturen. Variabelfilen kan lastes ned ved å trykke på "Lag fil" og derretter "Last ned"</p>
+          <p>Rediger de ulike variablene for den ønskede infrastrukturen.</p>
        
-	        <table id ="variablesTable"></table>
-          <button id="showDeployment">Neste</button>
+          <h4 id="moduleName"></h4>
+          <p id="moduleDescription"></p>
+	        <table class="table" id="variablesTable"></table>
+          <button class="btn btn-primary btn-block" id="showDeployment">Rull ut</button>
         </div>
         
         <div class="col-sm-3" id ="deployment-view">
           <h3>3. Rull ut</h3>
-          <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
-          <p>
-            <input id="planBtn" type="button" value="Plan" />&nbsp;&nbsp;&nbsp;
-            <input id="applyBtn" type="button" value="Apply" />&nbsp;&nbsp;&nbsp;
-            <input id="destroyBtn" type="button" value="Destroy"/>
-	        </p>
-	        <div class="alert-box output" id="Output"></div>
+          <table class="table">
+            <thead>
+            <tr><td>
+                <p>Trykk på "Plan" for å planlegge utrullingen, "Apply" for å rulle ut og "Destroy" for å fjerne den eksistrende infrastrukturen.</p>
+            </td></tr>
+            </thead>
+            <tr><td>
+                <div class="btn-group btn-group-justified">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default" id="planBtn">Plan</button>
+                  </div>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="applyBtn">Apply</button>
+                  </div>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-danger" id="destroyBtn">Destroy</button>
+                  </div>
+                </div>
+            </td></tr>
+            <tr><td>
+	              <div class="well" id="deploymentOutput"></div>
+            </td></tr>
         </div>
       </div>
     </div>
