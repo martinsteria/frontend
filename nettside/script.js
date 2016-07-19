@@ -24,28 +24,29 @@ $(document).ready(function () {
 
 function logIn() {
     user = $("#usernameInput").val()
-	$.get({
-		url: users,
-		success: function(result) {
-			console.log(result)
-			var e = false;
-			for (i=0; i< result.length ; i++) {
-				console.log(result[i]+"="+user);
-				if (user == result[i]){
-					e = true;
-				}
-			}
-			if (e == true) {
-			    importLibraryModules(users + "?user=" + user, "existing", "&");
-			}
-			else {
-				makeUser(user);
-			}
-		}
-	})
-    $("#login-view").hide()
-    $("#library-view").show()
-    importLibraryModules(modules, "library", "?")
+	  $.get({
+		    url: users,
+		    success: function(result) {
+			      console.log(result)
+			      var e = false;
+			      for (i=0; i< result.length ; i++) {
+				        console.log(result[i]+"="+user);
+				        if (user == result[i]){
+					          e = true;
+				        }
+			      }
+			      if (e == true) {
+			          importLibraryModules(users + "?user=" + user, "existing", "&");
+			      }
+			      else {
+				        makeUser(user);
+			      }
+		    }
+	  })
+    $("#login-view").fadeOut("slow", function() {
+        importLibraryModules(modules, "library", "?")
+        $("#library-view").fadeIn("slow")
+    })
 }
 
 function makeUser(user) {
@@ -68,15 +69,15 @@ function importLibraryModules(path, meny, x) {
         console.log(resultModules);
         var content = ""
         if (resultModules != null){
-            for (i = 0; i < resultModules.length; i++) {
-                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
-            }
-
-            $("#"+meny).html(content);
-            $("#"+meny).click(function() {
-            $("#variables-view").show()
+        content += "<option selected disabled hidden>Biblioteksmoduler...</option>"
+        for (i = 0; i < resultModules.length; i++) {
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+        }
+        $("#"+meny).html(content);
+        $("#"+meny).change(function() {
             module = $("#"+meny+" option:selected").text()
             showModule(path + x +"module=" + module)
+            $("#variables-view").fadeIn("slow")
         })
     }
     });
@@ -86,23 +87,20 @@ function importLibraryModules(path, meny, x) {
 function showModule(path) {
     $.getJSON(path, function(result) {
         var content = ""
-		    content += "<span>" + result.name + "</span><br>" + result.description;
-        $("#description").html(content)
-        $("#description").show()
-        console.log(result)
+        $("#moduleName").html(result.name)
+        $("#moduleDescription").html(result.description)
         var myTable = ""
-				myTable += "<thead><tr><th>Navn</th><th></th><th>Verdi</th></tr></thead>"
+				myTable += "<thead><tr><th>Navn</th><th>Verdi</th></tr></thead>"
         for (i = 0; i < result.variables.length; i++) {
-            var textInputBox = '<input type="text" value="' + result.variables[i].defaultValue + '" id="' + [i] + '"name="' + [i] + '" />';
+            var textInputBox = '<input type="text" class="form-control" value="' + result.variables[i].defaultValue + '" id="' + [i] + '" />';
             myTable += '<tr>'
-            myTable += '<td>' + result.variables[i].name + '</td>'
-            myTable += '<td> <div class="help-tip"> <p>'+ result.variables[i].description +'</p> </div> </td>'
+            myTable += '<td><a href="#" data-placement="left" data-toggle="tooltip" title="' + result.variables[i].description + '">' + result.variables[i].name + '</a></td>'
             myTable += '<td>' + textInputBox + '</td>'
             myTable += '</tr>'
         }
         $("#variablesTable").html(myTable)
-
         $("#showDeployment").click(showDeployment)
+        $("[data-toggle=\"tooltip\"]").tooltip();
     });
 }
 
@@ -113,29 +111,41 @@ function showDeployment() {
             console.log(result)
         }
     })
+    $("#deploymentOutput").hide()
     $("#deployment-view").show()
-    $("#planBtn").click(plan)
-    $("#applyBtn").click(apply)
-    $("#destroyBtn").click(destroy)
+    $("#planBtn").click(function() {
+        deploy("plan")
+    })
+    $("#applyBtn").click(function() {
+        deploy("apply")
+    })
+    $("#destroyBtn").click(function() {
+        deploy("destroy")
+    })
 }
 
-function plan() {
-    var url = deployment + "?user=" + user + "&module=" + module + "&command=plan"
+function deploy(command) {
+    var url = deployment + "?user=" + user + "&module=" + module + "&command=" + command
     $.post({
         url: url,
         data: getParameters,
         success: function(result) {
             console.log(result)
-            setInterval(showOutput, 1000)
+            showOutput()
         },
         dataType: "json"
     })
+    $("#deploymentOutput").fadeIn("slow")
 }
 
 function showOutput() {
     var url = deployment + "?user=" + user + "&module=" + module + "&command=plan"
     $.getJSON(url, function(result) {
-        console.log(result)
+        $("#deploymentOutput").html(result.output)
+        if (result.status == "Running") {
+            setTimeout(showOutput, 1000)
+        }
+
     });
 }
 
