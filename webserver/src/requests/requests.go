@@ -6,6 +6,7 @@ import (
 	//"terraform"
 	"encoding/json"
 	"users"
+	"fmt"
 )
 
 var lib *library.Library
@@ -67,7 +68,8 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				}
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
-					go users.GetDeployStruct(user).TerraformCommand(command, users.UsersRootDir + "/" + user + "/" + module )
+					module = module
+					go users.GetDeployStruct(user).TerraformCommand(command, users.UsersRootDir + "/" + user + "/" + module)
 					users.GetDeployStruct(user).BufferRead <- 1
 					output, _ := json.Marshal(users.GetDeployStruct(user))
 					users.GetDeployStruct(user).BufferRead <- 1
