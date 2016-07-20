@@ -10,10 +10,6 @@ import (
 	"time"
 )
 
-const (
-	staticBasePath = "/home/martin/frontend/nettside"
-)
-
 //RequestData contains information sent alongside the http request
 type RequestData struct {
 	//Query is a map of the http query
@@ -43,7 +39,7 @@ func AddResponse(endpoint string, callback func(RequestData) []byte) {
 //It also serves static content through the root (/) endpoint
 //It sets the content type of all responses to application/json
 func HandleRequests(staticContentPath string, port string) {
-	fs := http.FileServer(http.Dir(staticBasePath))
+	fs := http.FileServer(http.Dir(staticContentPath))
 	http.Handle("/", fs)
 
 	for _, r := range responses {
