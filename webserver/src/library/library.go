@@ -1,3 +1,4 @@
+//Package library contains functions for reading with a collection of Terraform modules
 package library
 
 import (
@@ -12,21 +13,26 @@ const (
 	LibraryModules = LibraryRootDir + "/modules"
 )
 
+//Library contains a structered representation of a Terraform module collection
 type Library struct {
 	Modules map[string]*doc.Module
 	RootDir string
 }
 
+//NewLibrary initializes and builds a library from a path pointing to a Terraform module collection
 func NewLibrary(rootDir string) *Library {
 	l := &Library{RootDir: rootDir}
 	l.Build()
 	return l
 }
 
+//GetRootDir returns the root directory of the library
 func (l *Library) GetRootDir() string {
 	return l.RootDir
 }
 
+//GetModuleListJSON returns a JSON representation of a list with all modules in the library
+//Each module contains an id, a name and a description
 func (l *Library) GetModuleListJSON() []byte {
 	type module struct {
 		Id          string `json:"id"`
@@ -43,6 +49,14 @@ func (l *Library) GetModuleListJSON() []byte {
 	return msJSON
 }
 
+//GetModuleDocumentationJSON returns a JSON representation of a module
+//The representation contains the following:
+//name: The Name of the module
+//id: A unique identifier of the module
+//description: The description of the module
+//provider: The provider of the module, if it has one
+//variables: A list of variables for the module
+//outputs: A list of outputs for the module
 func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 	if l.Modules[id] == nil {
 		return []byte("{\"status\": \"Module not found\"}")
@@ -71,6 +85,7 @@ func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 	return moduleJSON
 }
 
+//Build parses and imports the collection of Terraform modules located at the library's root directory.
 func (l *Library) Build() {
 	l.Modules = make(map[string]*doc.Module)
 	files, _ := ioutil.ReadDir(l.RootDir)

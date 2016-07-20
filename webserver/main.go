@@ -6,6 +6,11 @@ import (
 	"requests"
 )
 
+const (
+	staticContentPath = "/home/martin/frontend/nettside"
+	resourcesRootDir  = "/home/martin/frontend"
+)
+
 func main() {
 	requests.Init()
 
@@ -18,5 +23,5 @@ func main() {
 	api.AddResponse("/api/library/copy", requests.HandleLibraryCopyRequests)
 	api.AddResponse("/api/deploy", requests.HandleDeployRequests)
 
-	api.HandleRequests(os.Args[1])
+	api.HandleRequests(staticContentPath, os.Args[1])
 }
