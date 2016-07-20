@@ -16,6 +16,8 @@ var deployment = apiRoot + "/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
+    $("#login-view").hide()
+    $("#login-view").fadeIn("slow")
     $("#usernameInput").focus(); 
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
@@ -60,7 +62,7 @@ function logIn() {
         importLibraryModules(modules)
         $("#library-view").fadeIn("slow")
     })
-    var content = "<span>" + "Du er logget in som " + user + "" + "</span>";
+    var content = "<span>" + "Du er logget inn som " + user + "" + "</span>";
     $("#bruker").html(content)
     $("#bruker").show()
 }

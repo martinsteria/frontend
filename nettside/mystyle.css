@@ -1,4 +1,8 @@
-    <style type="text/css">
+        .jumbotron {
+            background-image: url('background_04.png') ;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
 
         span {
             display: inline-block;
@@ -114,4 +118,4 @@
 			left:0;
 		}
 
-    </style>
+    
