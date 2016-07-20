@@ -1,1 +1,3 @@
 webserver/pkg/*
+webserver/users/*
+webserver/library/*
