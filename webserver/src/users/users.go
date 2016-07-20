@@ -40,7 +40,8 @@ func Init(dir string) {
 		userPath := usersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
 		users[u.Name()].Lib = library.NewLibrary(userPath)
-		users[u.Name()].Deploy = terraform.NewDeployment(usersRootDir)
+		users[u.Name()].Deploy = terraform.NewDeployment()
+
 	}
 
 }
@@ -57,7 +58,8 @@ func AddUser(name string) []byte {
 	users[name] = &User{RootDir: rootDir}
 	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
-	users[name].Deploy = terraform.NewDeployment(usersRootDir)
+	users[name].Deploy = terraform.NewDeployment()
+
 
 	return []byte("{\"status\": \"success\"}")
 }
@@ -80,6 +82,8 @@ func AddModule(user string, modulePath string) []byte {
 	if _, err := os.Stat(user + "/" + module); err == nil {
 		return []byte("\"status\": \"User module already exists\"")
 	}
+
+	terraform.GetTerraformModules(modulePath)
 
 	exec.Command("cp", "-r", modulePath, users[user].RootDir).Output()
 	users[user].Lib.Build()
