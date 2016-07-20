@@ -10,11 +10,6 @@ import (
 	"users"
 )
 
-const (
-	usersRootDir      = "/users"
-	libraryModulesDir = "/library/modules"
-)
-
 var lib *library.Library
 
 //Init initializes the package. Must be called before anything else

@@ -9,7 +9,7 @@ import (
 
 const (
 	libraryURL     = "https://github.com/martinsteria/library"
-	LibraryRootDir = "home/martin/library"
+	LibraryRootDir = "/home/martin/library"
 	LibraryModules = LibraryRootDir + "/modules"
 )
 
