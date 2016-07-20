@@ -8,7 +8,7 @@ import (
 
 const (
 	libraryURL     = "https://github.com/martinsteria/library"
-	LibraryRootDir = "home/martin/library"
+	LibraryRootDir = "D:/Users/bengelse/test/library" /*"home/martin/library"*/
 	LibraryModules = LibraryRootDir + "/modules"
 )
 

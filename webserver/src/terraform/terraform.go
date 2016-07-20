@@ -7,6 +7,8 @@ import (
 	"bytes"     
 	"strings"
 	"time" 
+	"encoding/json"
+	
 	)
 
 type Deployment struct {
@@ -15,16 +17,14 @@ type Deployment struct {
 	Output  		[]byte `json:"output"`
 	buf 			bytes.Buffer
 	outputChannel chan string
-	BufferRead chan int
-	Deleted chan int
+	writeLock chan int
 }
 
 func NewDeployment(path string) *Deployment {
     t := &Deployment{Status : ""}
 	t.Path = path
 	t.outputChannel = make(chan string, 1)
-	t.BufferRead = make(chan int, 1)
-	t.Deleted = make(chan int, 1)
+	t.writeLock = make(chan int, 1)
    
    return t
 }
@@ -41,6 +41,7 @@ func (t *Deployment) readOutput(){
 		if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
 			//t.Output = []byte(tempOutput)
 			t.Status = ""
+			temp = ""
 			return
 		}
 		}
@@ -57,14 +58,16 @@ func (t *Deployment) getOutput(){
 				temp += out
 				t.Output = []byte(temp)
 				if strings.Contains(temp, "Finished") {
+					temp = ""
+					out = ""
 					return
 				}
 				out = ""
-			case <- t.BufferRead:
-				<-t.BufferRead
+			case <- t.writeLock:
+				<-t.writeLock
 				t.Output = []byte("")
 				temp = ""
-				t.Deleted <- 1
+				out = ""
 			case <- time.After(30*time.Second):
 				return
 
@@ -76,8 +79,6 @@ func (t *Deployment) getOutput(){
 func (t *Deployment)TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
-	fmt.Println("I TerraformCommand")
-
 	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
 
 
@@ -95,7 +96,7 @@ func (t *Deployment)TerraformCommand(command string, path string) {
 		io.Copy(&t.buf, stdout)
 		io.Copy(&t.buf, stderr)
 
-		t.buf.Write([]byte("\nFinished"))
+		t.buf.Write([]byte("\nFinished "))
 		return
 	} 
 
@@ -112,7 +113,7 @@ func (t *Deployment)TerraformCommand(command string, path string) {
 
 	io.Copy(&t.buf, stdout)
 	io.Copy(&t.buf, stderr)
-
+	t.buf.Reset()
 	t.buf.Write([]byte("Finished"))
 
 	//DELETE KEYS?????
@@ -127,3 +128,25 @@ func (t *Deployment) getModules() {
 }
 
 
+func (t *Deployment) GetDeploymentJSON() []byte {
+
+	type deploy struct {
+		Status         	string `json:"status"`
+		Output			[]byte `json:"output"`
+
+	}
+	d := new(deploy)
+	if t.Status == "Running"{
+		t.writeLock <- 1 //readlock
+		d.Status = t.Status
+		d.Output = t.Output
+		t.writeLock <- 1
+	} else {
+		d.Status = t.Status
+		d.Output = t.Output
+	}	
+
+	deploymentJSON, _ := json.Marshal(d)
+
+	return deploymentJSON
+}
