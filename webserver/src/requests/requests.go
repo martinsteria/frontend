@@ -62,7 +62,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
-				if users.GetLibrary(user).Modules[module].Deployment.Status == "Running" {
+				if users.GetDeployStruct(user).Deployment.Status == "Running" {
 					return []byte("{\"status:\": \"Running\"}")
 				}
 				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
