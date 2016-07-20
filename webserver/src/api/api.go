@@ -1,3 +1,5 @@
+//Package api provides primitives for attaching response functions to http requests.
+//All responses use the JSON format
 package api
 
 import (
@@ -12,9 +14,15 @@ const (
 	staticBasePath = "/home/martin/frontend/nettside"
 )
 
+//RequestData contains information sent alongside the http request
 type RequestData struct {
-	Query  map[string]string
-	Body   []byte
+	//Query is a map of the http query
+	Query map[string]string
+
+	//Body is the body of a http POST request
+	Body []byte
+
+	//Method is the method of the http request
 	Method string
 }
 
@@ -25,11 +33,16 @@ type response struct {
 
 var responses []response
 
+//AddResponse attaches a callback function to an endpoint.
+//The callback function returns an array of bytes on JSON format
 func AddResponse(endpoint string, callback func(RequestData) []byte) {
 	responses = append(responses, response{endpoint, callback})
 }
 
-func HandleRequests(port string) {
+//HandleRequests sets up the webserver to listen to all responses previously added
+//It also serves static content through the root (/) endpoint
+//It sets the content type of all responses to application/json
+func HandleRequests(staticContentPath string, port string) {
 	fs := http.FileServer(http.Dir(staticBasePath))
 	http.Handle("/", fs)
 
