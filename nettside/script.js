@@ -38,6 +38,10 @@ function logIn() {
 		    url: users,
 		    success: function(result) {
 			      var e = false;
+            if (result == null) {
+                makeUser(user)
+                return
+            }
 			      for (i=0; i< result.length ; i++) {
 				        console.log(result[i]+"="+user);
 				        if (user == result[i]){
@@ -99,6 +103,9 @@ function importUserModules(path, user) {
         console.log(resultModules);
         var content = ""
         content += "<option selected disabled hidden>Brukermoduler...</option>"
+        if (resultModules == null) {
+            return
+        }
         for (i = 0; i < resultModules.length; i++) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
@@ -130,7 +137,7 @@ function showModule(path) {
                 value = result.variables[i].defaultValue
             }
 
-            var textInputBox = '<input type="text" class="form-control" value="' + result.variables[i].defaultValue + '" id="' [i] + '" />';
+            var textInputBox = '<input type="text" class="form-control" value="' + value + '" />';
             myTable += '<tr>'
             myTable += '<td><a href="#" data-placement="left" data-toggle="tooltip" title="' + result.variables[i].description + '">' + result.variables[i].name + '</a></td>'
             myTable += '<td>' + textInputBox + '</td>'

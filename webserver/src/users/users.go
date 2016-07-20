@@ -28,8 +28,7 @@ func Init() {
 		userPath := UsersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
 		users[u.Name()].Lib = library.NewLibrary(userPath)
-		users[u.Name()].Deploy = new(terraform.Deployment)
-		users[u.Name()].Deploy.Init(UsersRootDir)
+		users[name].Deploy = terraform.NewDeployment(UsersRootDir)
 	}
 
 }
@@ -44,8 +43,7 @@ func AddUser(name string) []byte {
 	users[name] = &User{RootDir: rootDir}
 	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
-	users[name].Deploy = new(terraform.Deployment)
-	users[name].Deploy.Init(UsersRootDir)
+	users[name].Deploy = terraform.NewDeployment(UsersRootDir)
 
 	return []byte("{\"status\": \"success\"}")
 }

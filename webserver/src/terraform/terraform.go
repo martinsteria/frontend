@@ -19,11 +19,14 @@ type Deployment struct {
 	Deleted chan int
 }
 
-func (t *Deployment) Init(path string) {
+func NewDeployment(path string) *Deployment {
+    t := new(Deployment)
 	t.Path = path
 	t.outputChannel = make(chan string, 1)
 	t.BufferRead = make(chan int, 1)
 	t.Deleted = make(chan int, 1)
+   
+   return t
 }
 	
 func (t *Deployment) readOutput(){
