@@ -7,12 +7,6 @@ import (
 	"io/ioutil"
 )
 
-const (
-	libraryURL     = "https://github.com/martinsteria/library"
-	LibraryRootDir = "/home/martin/library"
-	LibraryModules = LibraryRootDir + "/modules"
-)
-
 //Library contains a structered representation of a Terraform module collection
 type Library struct {
 	Modules map[string]*doc.Module

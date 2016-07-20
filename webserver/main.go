@@ -12,7 +12,7 @@ const (
 )
 
 func main() {
-	requests.Init()
+	requests.Init(resourcesRootDir)
 
 	api.AddResponse("/api", func(api.RequestData) []byte {
 		return []byte("{}")

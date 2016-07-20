@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"terraform"
+	"strings"
 )
 
 const (
@@ -27,9 +28,11 @@ type User struct {
 }
 
 var users map[string]*User
+var usersRootDir string
 
 //Init initializes the existing userbase
 func Init(usersRootDir string) {
+	usersRootDir = usersRootDir
 	users = make(map[string]*User)
 	files, _ := ioutil.ReadDir(UsersRootDir)
 	for _, u := range files {

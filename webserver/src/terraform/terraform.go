@@ -37,7 +37,6 @@ func (t *Deployment) readOutput() {
 			temp = strings.Replace(temp, tempOutput, "", -1)
 			tempOutput += temp
 			t.outputChannel <- temp
-			fmt.Println(temp)
 			if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
 				//t.Output = []byte(tempOutput)
 				t.Status = ""
@@ -146,7 +145,6 @@ func (t *Deployment) GetDeploymentJSON() []byte {
 
 
 	deploymentJSON, _ := json.Marshal(d)
-	fmt.Println(string(deploymentJSON))
 
 	return deploymentJSON
 }
