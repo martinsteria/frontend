@@ -28,7 +28,7 @@ func Init() {
 		userPath := UsersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
 		users[u.Name()].Lib = library.NewLibrary(userPath)
-		users[name].Deploy = terraform.NewDeployment(UsersRootDir)
+		users[u.Name()].Deploy = terraform.NewDeployment(UsersRootDir)
 	}
 
 }
