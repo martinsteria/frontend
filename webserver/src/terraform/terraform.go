@@ -12,16 +12,16 @@ import (
 
 type Deployment struct {
 	Status        string `json:"status"`
-	Path          string `json:"path"`
+	//Path          string `json:"path"`
 	Output        []byte `json:"output"`
 	buf           bytes.Buffer
 	outputChannel chan string
 	writeLock chan int
 }
 
-func NewDeployment(path string) *Deployment {
+func NewDeployment() *Deployment {
 	t := &Deployment{Status: ""}
-	t.Path = path
+	//t.Path = path
 	t.outputChannel = make(chan string, 1)
 	t.writeLock = make(chan int, 1)
    	return t
@@ -78,7 +78,7 @@ func (t *Deployment) getOutput() {
 func (t *Deployment) TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
-	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
+	//t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
 	t.buf.Reset()
 
 	if command == "destroy" {
@@ -116,10 +116,10 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 	//DELETE KEYS?????
 }
 
-func (t *Deployment) getModules() {
+func GetTerraformModules(path string) {
 
 	init := exec.Command("terraform", "get")
-	init.Dir = t.Path
+	init.Dir = path
 	init.CombinedOutput()
 	
 }

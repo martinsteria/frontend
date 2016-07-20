@@ -40,7 +40,6 @@ func NewModule(path string) *Module {
 
 func (m *Module) BuildModule() {
 	files, _ := ioutil.ReadDir(m.Path)
-
 	var variables []Variable
 	var outputs []Output
 	add := false
