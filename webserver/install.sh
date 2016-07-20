@@ -5,10 +5,14 @@ LIB_DIR="library"
 LIB_GIT_URL="https://github.com/martinsteria/library"
 USR_DIR="users"
 
-export GOPATH=$DIR
-mkdir ${DIR}/users
-if [ ! -d "${DIR}/library"]; then
-    git clone $LIB_GIT_URL ${DIR}/library
+
+if [ ! -d "${DIR}/${USR_DIR}" ]; then
+    mkdir ${DIR}/${USR_DIR}
 fi
 
+if [ ! -d "${DIR}/${LIB_DIR}" ]; then
+    git clone $LIB_GIT_URL ${DIR}/${LIB_DIR}
+fi
+
+export GOPATH=$DIR
 sudo -E go run main.go 80
