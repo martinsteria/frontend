@@ -1,7 +1,7 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    
+
 	<title></title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" type="text/css" href="mystyle.css">
@@ -25,14 +25,14 @@
         <div class="col-sm-4">
           <h3>Logg Inn</h3>
           <p>Logg inn på din konto. Finnes ikke kontoen opprettes en ny automatisk.</p>
-          
+
           <label>Brukernavn</label>
           <table class="table">
             <tr>
               <td><input type="text" class="form-control" id="usernameInput"></td>
               <td><button type="button" class="btn btn-default" id="loginBtn">Logg inn</button></td>
             </tr>
-              
+
           </table>
             <hr>
             <p>&copy; Sopra Steria <script>new Date().getFullYear()>2010&&document.write(new Date().getFullYear());</script> </p>
@@ -65,11 +65,13 @@
 <!--Variables-view-->
         <div class="col-sm-6" id ="variables-view">
           <h3 id="moduleName"></h3>
+          <p id="moduleProvider"></p>
           <p id="moduleDescription"></p>
-	        <table class="table" id="variablesTable"></table>
+          <table class="table" id="moduleOutputs"></table>
+	        <table class="table" id="moduleVariables"></table>
           <button class="btn btn-primary btn-block" id="showDeployment">Rull ut</button>
         </div>
-       
+
 <!--Deployment-view-->
         <div class="col-sm-3" id ="deployment-view">
           <h3>3. Rull ut</h3>
@@ -98,9 +100,9 @@
         </div>
       </div>
     </div>
-    
+
     <hr />
     <script src="script.js"></script>
-    
+
 </body>
 </html>

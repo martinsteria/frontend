@@ -37,7 +37,9 @@ func (l *Library) GetModuleListJSON() []byte {
 	var ms []module
 
 	for _, m := range l.Modules {
-		ms = append(ms, module{m.Id, m.Name, m.Description})
+		if m.Provider != "" {
+			ms = append(ms, module{m.Id, m.Name, m.Description})
+		}
 	}
 
 	msJSON, _ := json.Marshal(ms)
