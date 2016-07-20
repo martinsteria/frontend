@@ -20,7 +20,7 @@ type Deployment struct {
 }
 
 func NewDeployment(path string) *Deployment {
-    t := new(Deployment)
+    t := &Deployment{Status : ""}
 	t.Path = path
 	t.outputChannel = make(chan string, 1)
 	t.BufferRead = make(chan int, 1)
@@ -76,6 +76,7 @@ func (t *Deployment) getOutput(){
 func (t *Deployment)TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
+	fmt.Println("I TerraformCommand")
 
 	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
 

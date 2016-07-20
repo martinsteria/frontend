@@ -78,13 +78,20 @@ func HandleDeployRequests(r api.RequestData) []byte {
 		}
 	} else if r.Method == "GET" {
 		if user, present := r.Query["user"]; present {
-			if _, present := r.Query["module"]; present {
-				deploy := users.GetDeployStruct(user)
-				deploy.BufferRead <- 1
+			deploy := users.GetDeployStruct(user)
+			fmt.Println(deploy.Status)
+			if deploy.Status != "Running"{
+				fmt.Println("STATUS: " + string(deploy.Status) + "\noutput: " + string(deploy.Output))
 				output, _ := json.Marshal(deploy)
-				deploy.BufferRead <- 1
-				<- deploy.Deleted
 				return output
+			} else{
+				if _, present := r.Query["module"]; present {
+					deploy.BufferRead <- 1
+					output, _ := json.Marshal(deploy)
+					deploy.BufferRead <- 1 // Bufferen blir fullt
+					<- deploy.Deleted
+					return output
+				}
 			}
 		}
 	}
