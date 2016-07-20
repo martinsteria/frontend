@@ -1,7 +1,6 @@
 package terraform
 
 import (
-	//"log"
 	"bytes"
 	"io"
 	"os/exec"
@@ -37,6 +36,7 @@ func (t *Deployment) readOutput() {
 			temp = strings.Replace(temp, tempOutput, "", -1)
 			tempOutput += temp
 			t.outputChannel <- temp
+
 			if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
 				//t.Output = []byte(tempOutput)
 				t.Status = ""
@@ -95,6 +95,7 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 		io.Copy(&t.buf, stdout)
 		io.Copy(&t.buf, stderr)
 
+
 		t.buf.Write([]byte("\nFinished "))
 		return
 	}
@@ -112,7 +113,6 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 	io.Copy(&t.buf, stdout)
 	io.Copy(&t.buf, stderr)
 	t.buf.Write([]byte("Finished"))
-
 	//DELETE KEYS?????
 }
 
@@ -121,6 +121,7 @@ func (t *Deployment) getModules() {
 	init := exec.Command("terraform", "get")
 	init.Dir = t.Path
 	init.CombinedOutput()
+	
 }
 
 
