@@ -143,7 +143,6 @@ func (t *Deployment) GetDeploymentJSON() []byte {
 		d.Output = string(t.Output)
 	}	
 
-
 	deploymentJSON, _ := json.Marshal(d)
 
 	return deploymentJSON

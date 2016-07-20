@@ -74,7 +74,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				}
 				if command, present := r.Query["command"]; present { 
 					deploy := users.GetDeployStruct(user)
-					//users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
+					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					go deploy.TerraformCommand(command, lib.GetRootDir() + "/" + user + "/" + module)
 					output := deploy.GetDeploymentJSON()
 					return output
