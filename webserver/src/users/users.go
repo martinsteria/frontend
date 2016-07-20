@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"terraform"
+	"strings"
 )
 
 const (

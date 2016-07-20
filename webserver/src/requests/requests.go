@@ -6,9 +6,7 @@ import (
 	"library"
 	//"terraform"
 	"encoding/json"
-	"fmt"
 	"users"
-	"fmt"
 )
 
 var lib *library.Library
@@ -73,23 +71,11 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				if users.GetDeployStruct(user).Status == "Running" {
 					return []byte("{\"status:\": \"Running\"}")
 				}
-<<<<<<< HEAD
 				if command, present := r.Query["command"]; present { 
 					deploy := users.GetDeployStruct(user)
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					go deploy.TerraformCommand(command, users.UsersRootDir + "/" + user + "/" + module)
 					output := deploy.GetDeploymentJSON()
-					fmt.Println()
-=======
-				if command, present := r.Query["command"]; present { // DO I HAVE TO CHECK FOR BODY??
-					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
-					module = module
-					go users.GetDeployStruct(user).TerraformCommand(command, users.UsersRootDir+"/"+user+"/"+module)
-					users.GetDeployStruct(user).BufferRead <- 1
-					output, _ := json.Marshal(users.GetDeployStruct(user))
-					users.GetDeployStruct(user).BufferRead <- 1
-					<-users.GetDeployStruct(user).Deleted
->>>>>>> f9c7eb2529773a4f450387b85abcca12a1f309ca
 					return output
 				}
 			}
