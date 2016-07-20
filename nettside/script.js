@@ -103,7 +103,7 @@ function importLibraryModules(path) {
     });
 }
 
-/*Sends a get-request for a JSON-file containing the modules for this user. Enteres the available modules to #existing*/
+/*Sends a get-request for a JSON-file containing the modules for this user. Enteres the available modules to #userLibrary*/
 function importUserModules(path, user) {
     $.getJSON(path + "?user=" + user, function (resultModules) {
         console.log(resultModules)
@@ -117,9 +117,9 @@ function importUserModules(path, user) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
 
-        $("#existing").html(content);
-        $("#existing").change(function() {
-            module = $("#existing option:selected").text()
+        $("#userLibrary").html(content);
+        $("#userLibrary").change(function () {
+            module = $("#userLibrary option:selected").text()
             moduleSource = "USER"
             showModule(path + "?user=" + user +  "&module=" + module)
             $("#variables-view").fadeIn("slow")
