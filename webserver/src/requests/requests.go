@@ -7,10 +7,12 @@ import (
 	//"terraform"
 	"users"
 )
+
 const (
-	usersRootDir = "/users"
+	usersRootDir      = "/users"
 	libraryModulesDir = "/library/modules"
 )
+
 var lib *library.Library
 
 //Init initializes the package. Must be called before anything else
@@ -72,7 +74,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				if users.GetDeployStruct(user).Status == "Running" {
 					return []byte("{\"status:\": \"Running\"}")
 				}
-				if command, present := r.Query["command"]; present { 
+				if command, present := r.Query["command"]; present {
 					deploy := users.GetDeployStruct(user)
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					go deploy.TerraformCommand(command, users.GetLibrary(user).Modules[module].Path)
@@ -84,11 +86,11 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	} else if r.Method == "GET" {
 		if user, present := r.Query["user"]; present {
 			deploy := users.GetDeployStruct(user)
-			if deploy.Status != "Running"{
+			if deploy.Status != "Running" {
 				out := deploy.GetDeploymentJSON()
 				deploy.Output = []byte("")
 				return out
-			} else{
+			} else {
 				if _, present := r.Query["module"]; present {
 					output := deploy.GetDeploymentJSON()
 					return output

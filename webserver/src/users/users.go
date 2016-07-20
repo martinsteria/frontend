@@ -5,14 +5,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"library"
+	"log"
 	"os"
 	"os/exec"
-	"terraform"
 	"strings"
-)
-
-const (
-	UsersRootDir = "/home/martin/users"
+	"terraform"
 )
 
 //User contains information about a user
@@ -31,15 +28,20 @@ var users map[string]*User
 var usersRootDir string
 
 //Init initializes the existing userbase
-func Init(usersRootDir string) {
-	usersRootDir = usersRootDir
+func Init(dir string) {
+	usersRootDir = dir
 	users = make(map[string]*User)
-	files, _ := ioutil.ReadDir(UsersRootDir)
+	files, err := ioutil.ReadDir(usersRootDir)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	for _, u := range files {
-		userPath := UsersRootDir + "/" + u.Name()
+		userPath := usersRootDir + "/" + u.Name()
 		users[u.Name()] = &User{RootDir: userPath}
 		users[u.Name()].Lib = library.NewLibrary(userPath)
 		users[u.Name()].Deploy = terraform.NewDeployment()
+
 	}
 
 }
@@ -47,7 +49,7 @@ func Init(usersRootDir string) {
 //AddUser adds a new user to the userbase. If the user already exists an error code is returned
 //Returns an array of bytes representing JSON
 func AddUser(name string) []byte {
-	rootDir := UsersRootDir + "/" + name
+	rootDir := usersRootDir + "/" + name
 	if _, err := os.Stat(rootDir); err == nil {
 		return []byte("{\"status\": \"User already exists\"}")
 	}
@@ -57,6 +59,7 @@ func AddUser(name string) []byte {
 	users[name].Lib = library.NewLibrary(rootDir)
 	users[name].Lib.Build()
 	users[name].Deploy = terraform.NewDeployment()
+
 
 	return []byte("{\"status\": \"success\"}")
 }
@@ -74,7 +77,7 @@ func AddModule(user string, modulePath string) []byte {
 		}
 	}
 	splitted := strings.Split(modulePath, "/")
-	module := splitted[len(splitted)]
+	module := splitted[len(splitted)-1]
 
 	if _, err := os.Stat(user + "/" + module); err == nil {
 		return []byte("\"status\": \"User module already exists\"")

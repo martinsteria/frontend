@@ -8,7 +8,7 @@ import (
 
 const (
 	staticContentPath = "/home/martin/frontend/nettside"
-	resourcesRootDir  = "/home/martin/frontend"
+	resourcesRootDir  = "/home/martin/frontend/webserver"
 )
 
 func main() {
