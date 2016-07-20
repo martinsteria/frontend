@@ -5,12 +5,7 @@ import (
 	"doc"
 	"encoding/json"
 	"io/ioutil"
-)
-
-const (
-	libraryURL     = "https://github.com/martinsteria/library"
-	LibraryRootDir = "/home/martin/library"
-	LibraryModules = LibraryRootDir + "/modules"
+	"log"
 )
 
 //Library contains a structered representation of a Terraform module collection
@@ -88,7 +83,11 @@ func (l *Library) GetModuleDocumentationJSON(id string) []byte {
 //Build parses and imports the collection of Terraform modules located at the library's root directory.
 func (l *Library) Build() {
 	l.Modules = make(map[string]*doc.Module)
-	files, _ := ioutil.ReadDir(l.RootDir)
+	files, err := ioutil.ReadDir(l.RootDir)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for _, f := range files {
 		l.Modules[f.Name()] = doc.NewModule(l.RootDir + "/" + f.Name())

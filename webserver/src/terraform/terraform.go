@@ -1,29 +1,27 @@
 package terraform
 
 import (
-	//"log"
 	"bytes"
 	"io"
 	"os/exec"
 	"strings"
 	"time" 
 	"encoding/json"
-	
 	)
 
 
 type Deployment struct {
 	Status        string `json:"status"`
-	Path          string `json:"path"`
+	//Path          string `json:"path"`
 	Output        []byte `json:"output"`
 	buf           bytes.Buffer
 	outputChannel chan string
 	writeLock chan int
 }
 
-func NewDeployment(path string) *Deployment {
+func NewDeployment() *Deployment {
 	t := &Deployment{Status: ""}
-	t.Path = path
+	//t.Path = path
 	t.outputChannel = make(chan string, 1)
 	t.writeLock = make(chan int, 1)
    	return t
@@ -80,7 +78,8 @@ func (t *Deployment) getOutput() {
 func (t *Deployment) TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
-	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
+	//t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
+	t.buf.Reset()
 
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
@@ -95,6 +94,7 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 
 		io.Copy(&t.buf, stdout)
 		io.Copy(&t.buf, stderr)
+
 
 		t.buf.Write([]byte("\nFinished "))
 		return
@@ -112,17 +112,16 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 
 	io.Copy(&t.buf, stdout)
 	io.Copy(&t.buf, stderr)
-	t.buf.Reset()
 	t.buf.Write([]byte("Finished"))
-
 	//DELETE KEYS?????
 }
 
-func (t *Deployment) getModules() {
+func GetTerraformModules(path string) {
 
 	init := exec.Command("terraform", "get")
-	init.Dir = t.Path
+	init.Dir = path
 	init.CombinedOutput()
+	
 }
 
 
@@ -131,18 +130,18 @@ func (t *Deployment) GetDeploymentJSON() []byte {
 
 	type deploy struct {
 		Status         	string `json:"status"`
-		Output			[]byte `json:"output"`
+		Output			string `json:"output"`
 
 	}
 	d := new(deploy)
 	if t.Status == "Running"{
 		t.writeLock <- 1 //readlock
 		d.Status = t.Status
-		d.Output = t.Output
+		d.Output = string(t.Output)
 		t.writeLock <- 1
 	} else {
 		d.Status = t.Status
-		d.Output = t.Output
+		d.Output = string(t.Output)
 	}	
 
 	deploymentJSON, _ := json.Marshal(d)

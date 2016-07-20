@@ -8,11 +8,11 @@ import (
 
 const (
 	staticContentPath = "/home/martin/frontend/nettside"
-	resourcesRootDir  = "/home/martin/frontend"
+	resourcesRootDir  = "/home/martin/frontend/webserver"
 )
 
 func main() {
-	requests.Init()
+	requests.Init(resourcesRootDir)
 
 	api.AddResponse("/api", func(api.RequestData) []byte {
 		return []byte("{}")
