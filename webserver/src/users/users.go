@@ -75,7 +75,7 @@ func AddModule(user string, modulePath string) []byte {
 		}
 	}
 	splitted := strings.Split(modulePath, "/")
-	module := splitted[len(splitted)]
+	module := splitted[len(splitted)-1]
 
 	if _, err := os.Stat(user + "/" + module); err == nil {
 		return []byte("\"status\": \"User module already exists\"")
