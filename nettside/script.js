@@ -60,7 +60,7 @@ function logIn() {
         importLibraryModules(modules)
         $("#library-view").fadeIn("slow")
     })
-    var content = "<span>" + "Du er logget in som " + user + "" + "</span>";
+    var content = "<span>" + "Du er logget inn som " + user + "" + "</span>";
     $("#bruker").html(content)
     $("#bruker").show()
 }
