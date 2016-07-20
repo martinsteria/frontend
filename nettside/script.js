@@ -33,27 +33,29 @@ $(document).ready(function () {
     });
 })
 
+/*Checks wether the user exist by getting a list of all users from the server and comparing them with the entered username. 
+If the user exist it calls importUserModules(), if not it calls makeUser()*/
 
 function logIn() {
-    user = $("#usernameInput").val()
+    user = $("#usernameInput").val() 
 	  $.get({
-		    url: users,
+		    url: users, //Get-request to server for url= ../api/users
 		    success: function(result) {
 			      var e = false;
-            if (result == null) {
+            if (result == null) { 
                 makeUser(user)
                 return
             }
-			      for (i=0; i< result.length ; i++) {
+			      for (i=0; i< result.length ; i++) { // for all usernames check if it equals the enteres username
 				        console.log(result[i]+"="+user);
 				        if (user == result[i]){
-					          e = true;
+					          e = true; 
 				        }
 			      }
-			      if (e == true) {
+			      if (e == true) { 
 			          importUserModules(users, user);
 			      }
-			      else {
+			      else { 
 				        makeUser(user);
 			      }
 		    }
@@ -67,6 +69,7 @@ function logIn() {
     $("#bruker").show()
 }
 
+/* sends a post request to the server with the entered username*/
 function makeUser(user) {
     console.log("make new user")
     $.post({
@@ -80,6 +83,7 @@ function makeUser(user) {
     })
 }
 
+/*Sends a get-request for a JSON-file containing all available modules. Enteres the available modules to #library*/
 function importLibraryModules(path) {
     $.getJSON(path, function (resultModules) {
         var content = ""
@@ -99,6 +103,7 @@ function importLibraryModules(path) {
     });
 }
 
+/*Sends a get-request for a JSON-file containing the modules for this user. Enteres the available modules to #userLibrary*/
 function importUserModules(path, user) {
     $.getJSON(path + "?user=" + user, function (resultModules) {
         console.log(resultModules)
@@ -112,9 +117,9 @@ function importUserModules(path, user) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
         }
 
-        $("#existing").html(content);
-        $("#existing").change(function() {
-            module = $("#existing option:selected").text()
+        $("#userLibrary").html(content);
+        $("#userLibrary").change(function () {
+            module = $("#userLibrary option:selected").text()
             moduleSource = "USER"
             showModule(path + "?user=" + user +  "&module=" + module)
             $("#variables-view").fadeIn("slow")
@@ -123,9 +128,10 @@ function importUserModules(path, user) {
 }
 
 
+/* Sends a get request for a JSON-file containing the variables for the selected module. Adds each variables to the table #variablesTable*/
 function showModule(path) {
     $.getJSON(path, function(result) {
-        var content = "2. " //evt. 2. Set variabler for..
+        var content = "2. " 
         var name = result.name
         content += name.charAt(0).toUpperCase() + name.slice(1);
         $("#moduleName").html(content)
@@ -151,6 +157,8 @@ function showModule(path) {
     });
 }
 
+/* Shows deployment-view. Defines method to call for the buttons "planBtn", "applyBtn" and "destroyBtn".*/
+
 function showDeployment() {
     $("#deploymentOutput").hide()
     $("#deployment-view").fadeIn("slow")
@@ -164,6 +172,9 @@ function showDeployment() {
         deploy("destroy")
     })
 }
+
+
+/* Post-request to server containing the command triggered by either "planBtn", "applyBtn" or "destroyBtn"*/
 
 function deploy(command) {
     if (moduleSource == "LIB") {
@@ -189,6 +200,7 @@ function deploy(command) {
     $("#deploymentOutput").fadeIn("slow")
 }
 
+/*Shows input from server*/
 function showOutput() {
     var url = deployment + "?user=" + user + "&module=" + module
     $.getJSON(url, function(result) {
@@ -200,6 +212,7 @@ function showOutput() {
     });
 }
 
+/*wraps entered variables in a JSON-file*/
 function getParameters() {
     var table = document.getElementById("variablesTable");
     var variables = []

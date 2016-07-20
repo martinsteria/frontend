@@ -1,3 +1,4 @@
+//Package users contains functionality for working with users interacting with a Terraform library
 package users
 
 import (
@@ -10,18 +11,25 @@ import (
 )
 
 const (
-	UsersRootDir = "D:/Users/bengelse/test/users"
+	UsersRootDir = "/home/martin/users"
 )
 
+//User contains information about a user
 type User struct {
+	//The directory where the users modules are located
 	RootDir string
-	Lib     *library.Library
+
+	//The users private library
+	Lib *library.Library
+
+	//The status of the users deployment
 	Deploy *terraform.Deployment
 }
 
 var users map[string]*User
 
-func Init() {
+//Init initializes the existing userbase
+func Init(usersRootDir string) {
 	users = make(map[string]*User)
 	files, _ := ioutil.ReadDir(UsersRootDir)
 	for _, u := range files {
@@ -33,6 +41,8 @@ func Init() {
 
 }
 
+//AddUser adds a new user to the userbase. If the user already exists an error code is returned
+//Returns an array of bytes representing JSON
 func AddUser(name string) []byte {
 	rootDir := UsersRootDir + "/" + name
 	if _, err := os.Stat(rootDir); err == nil {
@@ -48,6 +58,8 @@ func AddUser(name string) []byte {
 	return []byte("{\"status\": \"success\"}")
 }
 
+//AddModule copies a module from the main library to the user
+//If a user already has a copy, an error is returned
 func AddModule(user string, modulePath string) []byte {
 	if _, present := users[user]; !present {
 		return []byte("{\"status\": \"User not found\"}")
@@ -58,12 +70,19 @@ func AddModule(user string, modulePath string) []byte {
 			return []byte("{\"status\": \"Module not found\"}")
 		}
 	}
+	splitted := strings.Split(modulePath, "/")
+	module := splitted[len(splitted)]
+
+	if _, err := os.Stat(user + "/" + module); err == nil {
+		return []byte("\"status\": \"User module already exists\"")
+	}
 
 	exec.Command("cp", "-r", modulePath, users[user].RootDir).Output()
 	users[user].Lib.Build()
 	return []byte("{\"status\": \"success\"}")
 }
 
+//GetLibrary returns a users library
 func GetLibrary(user string) *library.Library {
 	if users[user] == nil {
 		return nil
@@ -78,6 +97,7 @@ func GetDeployStruct(user string) *terraform.Deployment {
 	return users[user].Deploy
 }
 
+//GetUserListJSON returns a JSON representation of all the users
 func GetUserListJSON() []byte {
 	var usernames []string
 	for name, _ := range users {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     
@@ -18,7 +18,7 @@
     </div>
 
 
-
+<!--Login-view-->
     <div class="container" id="login-view">
       <div class="row">
         <div class="col-sm-4"></div>
@@ -41,6 +41,8 @@
       </div>
     </div>
 
+
+<!--Library-view-->
     <div class="container">
       <div class="row">
         <div class="col-sm-3" id ="library-view">
@@ -51,24 +53,24 @@
 	        <br>
 	        <br>
 		      <p>Din eksisterende infrastruktur</p>
-          <select class="form-control" id="existing"></select>
+          <select class="form-control" id="userLibrary"></select>
 	        <br>
 	        <br>
               <div class="alert-box notice" id="bruker"></div>
             <br>
 		      <div class="alert-box notice" id="newUser"></div>
         </div>
-	
+
+
+<!--Variables-view-->
         <div class="col-sm-6" id ="variables-view">
- <!--        <h3 id="modulName">2. Rediger Variabler</h3>
-          <p id="modulDescription">Rediger de ulike variablene for den ønskede infrastrukturen.</p>
-       -->
           <h3 id="moduleName"></h3>
           <p id="moduleDescription"></p>
 	        <table class="table" id="variablesTable"></table>
           <button class="btn btn-primary btn-block" id="showDeployment">Rull ut</button>
         </div>
-        
+       
+<!--Deployment-view-->
         <div class="col-sm-3" id ="deployment-view">
           <h3>3. Rull ut</h3>
           <table class="table">
