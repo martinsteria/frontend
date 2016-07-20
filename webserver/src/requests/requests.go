@@ -4,6 +4,7 @@ import (
 	"api"
 	"library"
 	"users"
+	"fmt"
 )
 
 var lib *library.Library
@@ -65,9 +66,10 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				}
 				if command, present := r.Query["command"]; present { 
 					deploy := users.GetDeployStruct(user)
-					//users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
+					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					go deploy.TerraformCommand(command, users.UsersRootDir + "/" + user + "/" + module)
 					output := deploy.GetDeploymentJSON()
+					fmt.Println()
 					return output
 				}
 			}

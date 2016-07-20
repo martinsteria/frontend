@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time" 
 	"encoding/json"
-	
+	"fmt"
 	)
 
 
@@ -38,7 +38,7 @@ func (t *Deployment) readOutput() {
 			temp = strings.Replace(temp, tempOutput, "", -1)
 			tempOutput += temp
 			t.outputChannel <- temp
-
+			fmt.Println(temp)
 			if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
 				//t.Output = []byte(tempOutput)
 				t.Status = ""
@@ -81,6 +81,7 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 
 	t.Status = "Running"
 	t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
+	t.buf.Reset()
 
 	if command == "destroy" {
 		cmd := exec.Command("terraform", command, "-force")
@@ -112,7 +113,6 @@ func (t *Deployment) TerraformCommand(command string, path string) {
 
 	io.Copy(&t.buf, stdout)
 	io.Copy(&t.buf, stderr)
-	t.buf.Reset()
 	t.buf.Write([]byte("Finished"))
 
 	//DELETE KEYS?????
@@ -131,21 +131,23 @@ func (t *Deployment) GetDeploymentJSON() []byte {
 
 	type deploy struct {
 		Status         	string `json:"status"`
-		Output			[]byte `json:"output"`
+		Output			string `json:"output"`
 
 	}
 	d := new(deploy)
 	if t.Status == "Running"{
 		t.writeLock <- 1 //readlock
 		d.Status = t.Status
-		d.Output = t.Output
+		d.Output = string(t.Output)
 		t.writeLock <- 1
 	} else {
 		d.Status = t.Status
-		d.Output = t.Output
+		d.Output = string(t.Output)
 	}	
 
+
 	deploymentJSON, _ := json.Marshal(d)
+	fmt.Println(string(deploymentJSON))
 
 	return deploymentJSON
 }
