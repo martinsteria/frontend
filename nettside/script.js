@@ -16,6 +16,8 @@ var deployment = apiRoot + "/deploy"
 
 $(document).ready(function () {
     $.ajaxSetup({ cache: false })
+    $("#login-view").hide()
+    $("#login-view").fadeIn("slow")
     $("#usernameInput").focus(); 
     $("#loginBtn").click(logIn)
     $("#library-view").hide()
