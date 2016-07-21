@@ -42,9 +42,9 @@ func NewModule(path string) *Module {
 
 func (m *Module) BuildModule() {
 	files, _ := ioutil.ReadDir(m.Path)
-
 	var variables []variable
 	var outputs []outputs
+
 	add := false
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tf") &&

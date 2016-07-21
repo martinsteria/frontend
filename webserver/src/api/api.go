@@ -64,6 +64,7 @@ func HandleRequests(staticContentPath string, port string) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(e.Callback(req))
 				fmt.Println(time.Now())
+				fmt.Println(r.URL)
 				fmt.Println(req.Method)
 				fmt.Println(req.Query)
 				fmt.Println(string(req.Body))
