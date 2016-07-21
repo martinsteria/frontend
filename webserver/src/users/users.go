@@ -27,6 +27,14 @@ type User struct {
 var users map[string]*User
 var usersRootDir string
 
+func newUser(dir string) *User {
+	u := &User{RootDir: userPath}
+	u.Lib = library.NewLibrary(userPath)
+	u.Deploy = terraform.NewDeployment(usersRootDir)
+
+	return u
+}
+
 //Init initializes the existing userbase
 func Init(dir string) {
 	usersRootDir = dir
@@ -36,11 +44,10 @@ func Init(dir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	for _, u := range files {
 		userPath := usersRootDir + "/" + u.Name()
-		users[u.Name()] = &User{RootDir: userPath}
-		users[u.Name()].Lib = library.NewLibrary(userPath)
-		users[u.Name()].Deploy = terraform.NewDeployment(usersRootDir)
+		users[u.Name()] = newUser(userPath)
 	}
 
 }
@@ -54,10 +61,7 @@ func AddUser(name string) []byte {
 	}
 
 	exec.Command("mkdir", rootDir).Output()
-	users[name] = &User{RootDir: rootDir}
-	users[name].Lib = library.NewLibrary(rootDir)
-	users[name].Lib.Build()
-	users[name].Deploy = terraform.NewDeployment(usersRootDir)
+	users[name] = newUser(rootDir)
 
 	return []byte("{\"status\": \"success\"}")
 }
@@ -82,7 +86,7 @@ func AddModule(user string, modulePath string) []byte {
 	}
 
 	exec.Command("cp", "-r", modulePath, users[user].RootDir).Output()
-	users[user].Lib.Build()
+	users[user].Lib.Rebuild()
 	return []byte("{\"status\": \"success\"}")
 }
 

@@ -64,7 +64,7 @@ func HandleLibraryCopyRequests(r api.RequestData) []byte {
 			}
 		}
 	}
-	return []byte("{}")
+	return []byte("{\"status:\": \"Invalid request\"}")
 }
 
 func HandleDeployRequests(r api.RequestData) []byte {

@@ -94,3 +94,8 @@ func (l *Library) Build() {
 		l.Modules[f.Name()].BuildModule()
 	}
 }
+
+//Rebuilds the library
+func (l *Library) Rebuild() {
+	l.Build()
+}
