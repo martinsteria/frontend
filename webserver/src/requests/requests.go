@@ -3,7 +3,6 @@ package requests
 
 import (
 	"api"
-	//"terraform"
 	"user"
 	"userbase"
 )
@@ -83,6 +82,7 @@ func HandleLibraryCopyRequests(r api.RequestData) []byte {
 	return []byte("{\"status:\": \"Invalid request\"}")
 }
 
+//HandleDeployRequests handles requests to the deploy endpoint
 func HandleDeployRequests(r api.RequestData) []byte {
 	if r.Method == "POST" {
 		if username, present := r.Query["user"]; present {

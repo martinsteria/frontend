@@ -1,4 +1,4 @@
-//package terraform provides functionality to launch a terraform command and retrieving its output
+//package terraform provides functionality to launch a terraform command and retrieve its output incrementally in real time
 package terraform
 
 import (
@@ -25,7 +25,7 @@ func NewCommand(path string) *Command {
 	return d
 }
 
-//Launch starts a command in its own goroutine.
+//Launch starts a command in its own goroutine. Returns status success on the JSON format
 func (d *Command) Launch(command string) []byte {
 	if d.status == "Running" {
 		return []byte("{\"status:\": \"failure: busy\"}")
@@ -47,6 +47,7 @@ func (d *Command) IsRunning() bool {
 	return false
 }
 
+//Returns the status of the command including output so far.
 func (d *Command) GetStatusJSON() []byte {
 	type output struct {
 		Status string `json:"status"`

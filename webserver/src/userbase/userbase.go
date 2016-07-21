@@ -1,3 +1,4 @@
+//package userbase provides functionality for managing a collection of users
 package userbase
 
 import (
@@ -13,6 +14,7 @@ type Userbase struct {
 	RootDir string
 }
 
+//NewUserbase creates a new userbase and initializes all existing users. The argument path is the root of the userbase directory
 func NewUserbase(path string) *Userbase {
 	ub := &Userbase{RootDir: path}
 	ub.Users = make(map[string]*user.User)
@@ -30,6 +32,7 @@ func NewUserbase(path string) *Userbase {
 	return ub
 }
 
+//AddUser adds a new user to the userbase
 func (ub *Userbase) AddUser(name string) []byte {
 	rootDir := ub.RootDir + "/" + name
 	if _, present := ub.Users[name]; present {
@@ -42,6 +45,7 @@ func (ub *Userbase) AddUser(name string) []byte {
 	return []byte("{\"status\": \"success\"}")
 }
 
+//GetUser returns a user from the userbase. If the user does not exist, it returns nil
 func (ub *Userbase) GetUser(name string) *user.User {
 	if user, present := ub.Users[name]; present {
 		return user
@@ -49,6 +53,7 @@ func (ub *Userbase) GetUser(name string) *user.User {
 	return nil
 }
 
+//GetUserListJSON return a list of usernames represented as JSON
 func (ub *Userbase) GetUserListJSON() []byte {
 	var usernames []string
 	for name, _ := range ub.Users {

@@ -1,3 +1,4 @@
+//package module provides functionality for working with terraform modules
 package module
 
 import (
@@ -23,6 +24,7 @@ type output struct {
 	Description string `json:"description"`
 }
 
+//Module is a structured representation of a terraform module
 type Module struct {
 	Name        string
 	Path        string
@@ -34,14 +36,15 @@ type Module struct {
 	Outputs     []output
 }
 
+//NewModule creates a new module. Path is where the terraform module resides on disk
 func NewModule(path string) *Module {
 	m := &Module{Path: path}
-	m.Build()
+	m.build()
 	m.Command = terraform.NewCommand(path)
 	return m
 }
 
-func (m *Module) Build() {
+func (m *Module) build() {
 	files, _ := ioutil.ReadDir(m.Path)
 	var variables []variable
 	var outputs []output
@@ -166,6 +169,8 @@ func (m *Module) updateVariableValues() {
 	}
 }
 
+//UpdateModule updates a module to include the terraform.tfvars file.
+//The argument should be supplied as a JSON list containing object with atleast a field "name" and a field "value"
 func (m *Module) UpdateModule(varsJSON []byte) {
 	file, err := os.Create(m.Path + "/terraform.tfvars")
 
@@ -194,6 +199,14 @@ func checkError(err error) {
 	}
 }
 
+//GetDocumentationJSON returns the documentation of a module represented as JSON
+//It has the following fields
+//"name": The name of the module
+//"id": A unique identifier for the module. Specifically, the name of the module's folder
+//"description": A short description of the modules purpose
+//"provider": The provider of the module
+//"variables": A list of all the variables of the module. Each variable has fields "name", "default", "description" and "value"
+//"output": A list of all the outputs of the module. Each output has fields "name", "value" and "description"
 func (m *Module) GetDocumentationJSON() []byte {
 	type module struct {
 		Name        string     `json:"name"`
@@ -217,6 +230,7 @@ func (m *Module) GetDocumentationJSON() []byte {
 	return mInternalJSON
 }
 
+//GetCommand returns the terraform command structure associated with this module
 func (m *Module) GetCommand() *terraform.Command {
 	return m.Command
 }

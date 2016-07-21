@@ -1,4 +1,4 @@
-//Package users contains functionality for working with users interacting with a Terraform library
+//Package user contains functionality for working with users interacting with a Terraform library
 package user
 
 import (
@@ -19,8 +19,7 @@ type User struct {
 	Modules map[string]*module.Module
 }
 
-var usersRootDir string
-
+//NewUser creates a new user and initializes it with all its modules. Dir is the users folder
 func NewUser(dir string) *User {
 	u := &User{RootDir: dir}
 
@@ -36,6 +35,12 @@ func NewUser(dir string) *User {
 	return u
 }
 
+//GetModuleListJSON returns a list of the users modules represented as JSON
+//It has the following fields
+//"name": The name of the module
+//"id": A unique identifier for the module. Specifically, the name of the module's folder
+//"description": A short description of the modules purpose
+//"provider": The provider of the module
 func (u *User) GetModuleListJSON() []byte {
 	type module struct {
 		Id          string `json:"id"`
@@ -53,15 +58,13 @@ func (u *User) GetModuleListJSON() []byte {
 	return msJSON
 }
 
+//GetModule returns the module structure of the argument id. If it doesn't exist, the function returns nil
 func (u *User) GetModule(id string) *module.Module {
 	if module, present := u.Modules[id]; present {
 		return module
 	}
 	return nil
 }
-
-//AddUser adds a new user to the userbase. If the user already exists an error code is returned
-//Returns an array of bytes representing JSON
 
 //AddModule copies a module from the main library to the user
 //If a user already has a copy, an error is returned
