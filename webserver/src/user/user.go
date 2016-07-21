@@ -4,13 +4,10 @@ package user
 import (
 	"encoding/json"
 	"io/ioutil"
-	"library"
 	"log"
-	"os"
-	"os/exec"
-	"strings"
-	"terraform"
 	"module"
+	"os/exec"
+	"terraform"
 )
 
 //User contains information about a user
@@ -27,19 +24,17 @@ type User struct {
 
 var usersRootDir string
 
-func newUser(dir string) *User {
-	u := &User{RootDir: userPath}
+func NewUser(dir string) *User {
+	u := &User{RootDir: dir}
 
-	u.Modules = make(map[string]*doc.Module)
+	u.Modules = make(map[string]*module.Module)
 	files, err := ioutil.ReadDir(u.RootDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for _, f := range files {
-		u.Modules[f.Name()] = doc.NewModule(u.RootDir + "/" + f.Name())
+		u.Modules[f.Name()] = module.NewModule(u.RootDir + "/" + f.Name())
 	}
-
-	u.Deploy = terraform.NewDeployment(usersRootDir)
 
 	return u
 }
@@ -60,7 +55,7 @@ func (u *User) GetModuleListJSON() []byte {
 	return msJSON
 }
 
-func (u *User) GetModule(id string) *Module {
+func (u *User) GetModule(id string) *module.Module {
 	if module, present := u.Modules[id]; present {
 		return module
 	}
@@ -72,21 +67,12 @@ func (u *User) GetModule(id string) *Module {
 
 //AddModule copies a module from the main library to the user
 //If a user already has a copy, an error is returned
-func (u *User) AddModule(modulePath string) []byte {
-	if _, err := os.Stat(modulePath); err != nil {
-		if os.IsNotExist(err) {
-			return []byte("{\"status\": \"Module not found\"}")
-		}
-	}
-
-	splitted := strings.Split(modulePath, "/")
-	module := splitted[len(splitted)-1]
-
-	if _, err := os.Stat(u.RootDir + "/" + module); err == nil {
+func (u *User) AddModule(m *module.Module) []byte {
+	if _, present := u.Modules[m.Id]; present {
 		return []byte("\"status\": \"User module already exists\"")
 	}
 
-	exec.Command("cp", "-r", modulePath, u.RootDir).Output()
-	u.Modules[f.Name()] = doc.NewModule(u.RootDir + "/" + f.Name())
+	exec.Command("cp", "-r", m.Path, u.RootDir).Output()
+	u.Modules[m.Id] = module.NewModule(u.RootDir + "/" + m.Id)
 	return []byte("{\"status\": \"success\"}")
 }

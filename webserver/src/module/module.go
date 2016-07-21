@@ -18,7 +18,7 @@ type variable struct {
 	Value        string `json:"value"`
 }
 
-type outputs struct {
+type output struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
@@ -31,7 +31,7 @@ type Module struct {
 	Provider    string               `json:"provider"`
 	Deployment  terraform.Deployment `json:"deployment"`
 	Variables   []variable           `json:"variables"`
-	Outputs     []outputs             `json:"outputs"`
+	Outputs     []output             `json:"outputs"`
 }
 
 func NewModule(path string) *Module {
@@ -43,7 +43,7 @@ func NewModule(path string) *Module {
 func (m *Module) BuildModule() {
 	files, _ := ioutil.ReadDir(m.Path)
 	var variables []variable
-	var outputs []outputs
+	var outputs []output
 
 	add := false
 	for _, f := range files {
@@ -100,7 +100,7 @@ func (m *Module) BuildModule() {
 					variables = append(variables, temp_variable)
 
 				} else if strings.Contains(line, "output") {
-					var temp_output outputs
+					var temp_output output
 					line = strings.Replace(line, "output", "", -1)
 					line = strings.Trim(line, " { } ")
 					temp_output.Name = strings.TrimSpace(line)
@@ -194,27 +194,25 @@ func checkError(err error) {
 }
 
 func (m *Module) GetDocumentationJSON() []byte {
-	var moduleJSON []byte
-
 	type module struct {
-		Name        string         `json:"name"`
-		Id          string         `json:"id"`
-		Description string         `json:"description"`
-		Provider    string         `json:"provider"`
+		Name        string     `json:"name"`
+		Id          string     `json:"id"`
+		Description string     `json:"description"`
+		Provider    string     `json:"provider"`
 		Variables   []variable `json:"variables"`
-		Outputs     []outputs   `json:"outputs"`
+		Outputs     []output   `json:"outputs"`
 	}
 
 	mInternal := module{
-		Name:        l.Modules[id].Name,
-		Id:          l.Modules[id].Id,
-		Description: l.Modules[id].Description,
-		Provider:    l.Modules[id].Provider,
-		Variables:   l.Modules[id].Variables,
-		Outputs:     l.Modules[id].Outputs,
+		Name:        m.Name,
+		Id:          m.Id,
+		Description: m.Description,
+		Provider:    m.Provider,
+		Variables:   m.Variables,
+		Outputs:     m.Outputs,
 	}
 
-	mInternalJSON, _ = json.Marshal(mInternal)
+	mInternalJSON, _ := json.Marshal(mInternal)
 	return mInternalJSON
 }
 

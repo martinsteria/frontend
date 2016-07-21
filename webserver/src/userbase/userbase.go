@@ -1,20 +1,22 @@
 package userbase
 
 import (
-	"user"
+	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os/exec"
+	"user"
 )
 
 type Userbase struct {
-	Users map[string]*User
+	Users   map[string]*user.User
 	RootDir string
 }
 
 func NewUserbase(path string) *Userbase {
 	ub := &Userbase{RootDir: path}
-	users = make(map[string]*User)
-	files, err := ioutil.ReadDir(usersRootDir)
+	ub.Users = make(map[string]*user.User)
+	files, err := ioutil.ReadDir(ub.RootDir)
 
 	if err != nil {
 		log.Fatal(err)
@@ -22,23 +24,25 @@ func NewUserbase(path string) *Userbase {
 
 	for _, u := range files {
 		userPath := ub.RootDir + "/" + u.Name()
-		users[u.Name()] = newUser(userPath)
+		ub.Users[u.Name()] = user.NewUser(userPath)
 	}
+
+	return ub
 }
 
 func (ub *Userbase) AddUser(name string) []byte {
 	rootDir := ub.RootDir + "/" + name
-	if _, present := Users[name]; present {
+	if _, present := ub.Users[name]; present {
 		return []byte("{\"status\": \"User already exists\"}")
 	}
 
 	exec.Command("mkdir", rootDir).Output()
-	ub.Users[name] = newUser(rootDir)
+	ub.Users[name] = user.NewUser(rootDir)
 
 	return []byte("{\"status\": \"success\"}")
 }
 
-func (ub *Userbase) GetUser(name string) *User {
+func (ub *Userbase) GetUser(name string) *user.User {
 	if user, present := ub.Users[name]; present {
 		return user
 	}
