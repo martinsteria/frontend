@@ -9,7 +9,7 @@ var module
 var moduleSource
 
 //API endpoints
-var apiRoot = "http://10.118.200.140/api"
+var apiRoot = "http://10.118.200.140:8080/api"
 var libModulesAPIEndpoint = apiRoot + "/library"
 var usersAPIEndpoint = apiRoot + "/users"
 var deploymentAPIEndpoint = apiRoot + "/deploy"
@@ -26,6 +26,7 @@ $(document).ready(function () {
     $("#deployment-view").hide()
     $("#description").hide()
     $("#newUser").hide()
+    $("#output-view").hide()
 
     //"logg inn" knapp aktiveres ved å trykke enter i inputbox
     $('#usernameInput').keypress(function (e) {
@@ -84,11 +85,14 @@ function createNewUser(user) {
 /*Sends a get-request for a JSON-file containing all available modules. Enteres the available modules to #library*/
 function importLibraryModules(path) {
     $.getJSON(path, function (resultModules) {
+        console.log(resultModules)
         var content = ""
         if (resultModules != null){
             content += "<option selected disabled hidden>Biblioteksmoduler...</option>"
             for (i = 0; i < resultModules.length; i++) {
-                content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+                if (resultModules[i].provider != "") {
+                    content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].provider + ": " + resultModules[i].name + "</option>"
+                }
             }
             $("#library").html(content);
             $("#library").unbind()
@@ -111,7 +115,7 @@ function importUserModules(path, user) {
             return
         }
         for (i = 0; i < resultModules.length; i++) {
-            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].name + "</option>"
+            content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].provider + ": " + resultModules[i].name + "</option>"
         }
 
         $("#userLibrary").html(content);
@@ -152,7 +156,7 @@ function showModule(path) {
         for (i = 0; i < result.variables.length; i++) {
             var value = result.variables[i].value
             if (value == "") {
-                value = result.variables[i].defaultValue
+                value = result.variables[i].default
             }
 
             var textInputBox = '<input type="text" class="form-control" value="' + value + '" />';
@@ -200,29 +204,56 @@ function deploy(command) {
             url: libModulesAPIEndpoint + "/copy?" + "user=" + user + "&module=" + module,
             success: function(result) {
                 importUserModules(usersAPIEndpoint, user)
+                var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module + "&command=" + command
+                $.post({
+                    url: url,
+                    data: getParameters(),
+                    success: function(result) {
+                        showOutput()
+                        $("#edit-view").fadeOut("slow", function() {
+                            $("#output-view").fadeIn("slow")
+                            $("#backButton").unbind()
+                            $("#backButton").click(function() {
+                                $("#output-view").fadeOut("slow", function () {
+                                    $("#edit-view").fadeIn("slow")
+                                })
+                            })
+                        })
+                    },
+                    dataType: "json"
+                })
             }
         })
-    }
+    } else {
 
-    var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module + "&command=" + command
-    $.post({
-        url: url,
-        data: getParameters(),
-        success: function(result) {
-            showOutput()
-            $("#edit-view").fadeOut("slow", function() {
-                $("#output-view").fadeIn("slow")
-            })
-        },
-        dataType: "json"
-    })
+        var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module + "&command=" + command
+        $.post({
+            url: url,
+            data: getParameters(),
+            success: function(result) {
+                showOutput()
+                $("#edit-view").fadeOut("slow", function() {
+                    $("#output-view").fadeIn("slow")
+                    $("#backButton").unbind()
+                    $("#backButton").click(function() {
+                        $("#output-view").fadeOut("slow", function () {
+                            $("#edit-view").fadeIn("slow")
+                        })
+                    })
+                })
+            },
+            dataType: "json"
+        })
+    }
 }
 
 /*Shows input from server*/
 function showOutput() {
     var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module
     $.getJSON(url, function(result) {
+        console.log(result)
         $("#deploymentOutput").html(result.output)
+        $("#deploymentError").html(result.error)
         if (result.status == "Running") {
             setTimeout(showOutput, 1000)
         }

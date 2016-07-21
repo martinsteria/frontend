@@ -7,6 +7,7 @@ import (
 	"log"
 	"module"
 	"os/exec"
+	"time"
 )
 
 //User contains information about a user
@@ -40,11 +41,12 @@ func (u *User) GetModuleListJSON() []byte {
 		Id          string `json:"id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`
+		Provider    string `json:"provider"`
 	}
 	var ms []module
 
 	for _, m := range u.Modules {
-		ms = append(ms, module{m.Id, m.Name, m.Description})
+		ms = append(ms, module{m.Id, m.Name, m.Description, m.Provider})
 	}
 
 	msJSON, _ := json.Marshal(ms)
@@ -69,6 +71,9 @@ func (u *User) AddModule(m *module.Module) []byte {
 	}
 
 	m.GetCommand().Launch("get")
+	for m.GetCommand().IsRunning() {
+		time.Sleep(10 * time.Millisecond)
+	}
 	exec.Command("cp", "-r", m.Path, u.RootDir).Output()
 	u.Modules[m.Id] = module.NewModule(u.RootDir + "/" + m.Id)
 	return []byte("{\"status\": \"success\"}")

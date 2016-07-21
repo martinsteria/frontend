@@ -4,8 +4,10 @@ package terraform
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 )
 
 //Command is the structure used to launch terraform commands
@@ -25,10 +27,24 @@ func NewCommand(path string) *Command {
 
 //Launch starts a command in its own goroutine.
 func (d *Command) Launch(command string) []byte {
+	if d.status == "Running" {
+		return []byte("{\"status:\": \"failure: busy\"}")
+	}
+
+	d.output.Reset()
+	d.error.Reset()
+
 	d.status = "Running"
 	go d.commandRunner(command)
 
 	return []byte("{\"status:\": \"success\"}")
+}
+
+func (d *Command) IsRunning() bool {
+	if d.status == "Running" {
+		return true
+	}
+	return false
 }
 
 func (d *Command) GetStatusJSON() []byte {
@@ -40,8 +56,8 @@ func (d *Command) GetStatusJSON() []byte {
 
 	o := output{
 		Status: d.status,
-		Output: d.output.String(),
-		Error:  d.error.String(),
+		Output: strings.Replace(d.output.String(), "\n", "<br />", -1),
+		Error:  strings.Replace(d.error.String(), "\n", "<br />", -1),
 	}
 
 	oJSON, err := json.Marshal(o)
@@ -53,6 +69,7 @@ func (d *Command) GetStatusJSON() []byte {
 }
 
 func (d *Command) commandRunner(command string) {
+	fmt.Println("Running ", command, " in ", d.path)
 	args := []string{command}
 
 	if command == "plan" || command == "apply" || command == "destroy" {
