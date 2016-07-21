@@ -40,13 +40,15 @@ func HandleUserRequests(r api.RequestData) []byte {
 			}
 		}
 
+		return users.GetUserListJSON()
+
 	} else if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
 			return users.AddUser(user)
 		}
 	}
 
-	return users.GetUserListJSON()
+	return []byte("{\"status:\": \"Invalid request\"}")
 }
 
 //HandleLibraryRequests handles requests to the library endpoint
@@ -57,9 +59,11 @@ func HandleLibraryRequests(r api.RequestData) []byte {
 				return module.GetDocumentationJSON()
 			}
 		}
+
+		return library.GetModuleListJSON()
 	}
 
-	return library.GetModuleListJSON()
+	return []byte("{\"status:\": \"Invalid request\"}")
 }
 
 //HandleLibraryCopyRequests handles requests to the library/copy endpoint
@@ -75,5 +79,35 @@ func HandleLibraryCopyRequests(r api.RequestData) []byte {
 			}
 		}
 	}
+
+	return []byte("{\"status:\": \"Invalid request\"}")
+}
+
+func HandleDeployRequests(r api.RequestData) []byte {
+	if r.Method == "POST" {
+		if username, present := r.Query["user"]; present {
+			if moduleId, present := r.Query["module"]; present {
+				if command, present := r.Query["command"]; present {
+					if user := users.GetUser(username); user != nil {
+						if module := user.GetModule(moduleId); module != nil {
+							module.UpdateModule(r.Body)
+							return module.GetCommand().Launch(command)
+						}
+					}
+				}
+			}
+		}
+	} else if r.Method == "GET" {
+		if username, present := r.Query["user"]; present {
+			if moduleId, present := r.Query["module"]; present {
+				if user := users.GetUser(username); user != nil {
+					if module := user.GetModule(moduleId); module != nil {
+						return module.GetCommand().GetStatusJSON()
+					}
+				}
+			}
+		}
+	}
+
 	return []byte("{\"status:\": \"Invalid request\"}")
 }

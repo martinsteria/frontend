@@ -7,16 +7,12 @@ import (
 	"log"
 	"module"
 	"os/exec"
-	"terraform"
 )
 
 //User contains information about a user
 type User struct {
 	//The directory where the users modules are located
 	RootDir string
-
-	//The status of the users deployment
-	Deploy *terraform.Deployment
 
 	//The users modules
 	Modules map[string]*module.Module
@@ -72,6 +68,7 @@ func (u *User) AddModule(m *module.Module) []byte {
 		return []byte("\"status\": \"User module already exists\"")
 	}
 
+	m.GetCommand().Launch("get")
 	exec.Command("cp", "-r", m.Path, u.RootDir).Output()
 	u.Modules[m.Id] = module.NewModule(u.RootDir + "/" + m.Id)
 	return []byte("{\"status\": \"success\"}")

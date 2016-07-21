@@ -14,7 +14,7 @@ import (
 type variable struct {
 	Name         string `json:"name"`
 	Description  string `json:"description"`
-	DefaultValue string `json:"defaultValue"`
+	DefaultValue string `json:"default"`
 	Value        string `json:"value"`
 }
 
@@ -24,23 +24,24 @@ type output struct {
 }
 
 type Module struct {
-	Name        string               `json:"name"`
-	Path        string               `json:"path"`
-	Id          string               `json:"id"`
-	Description string               `json:"description"`
-	Provider    string               `json:"provider"`
-	Deployment  terraform.Deployment `json:"deployment"`
-	Variables   []variable           `json:"variables"`
-	Outputs     []output             `json:"outputs"`
+	Name        string
+	Path        string
+	Id          string
+	Description string
+	Provider    string
+	Command     *terraform.Command
+	Variables   []variable
+	Outputs     []output
 }
 
 func NewModule(path string) *Module {
 	m := &Module{Path: path}
-	m.BuildModule()
+	m.Build()
+	m.Command = terraform.NewCommand(path)
 	return m
 }
 
-func (m *Module) BuildModule() {
+func (m *Module) Build() {
 	files, _ := ioutil.ReadDir(m.Path)
 	var variables []variable
 	var outputs []output
@@ -216,14 +217,6 @@ func (m *Module) GetDocumentationJSON() []byte {
 	return mInternalJSON
 }
 
-/*
-func DeleteKeys(path string, module Module){
-	for i := 0; i < len(module.Variables); i++ {
-		if strings.Contains(module.Variables[i].Name, "access_key") ||
-		strings.Contains(module.Variables[i].Name, "secret_key"){
-			module.Variables[i].Value = ""
-		}
-	}
-	CreateTFvars(path, module.Variables)
+func (m *Module) GetCommand() *terraform.Command {
+	return m.Command
 }
-*/

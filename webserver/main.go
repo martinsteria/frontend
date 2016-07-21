@@ -21,6 +21,7 @@ func main() {
 	api.AddResponse("/api/users", requests.HandleUserRequests)
 	api.AddResponse("/api/library", requests.HandleLibraryRequests)
 	api.AddResponse("/api/library/copy", requests.HandleLibraryCopyRequests)
+	api.AddResponse("/api/deploy", requests.HandleDeployRequests)
 
 	api.HandleRequests(staticContentPath, os.Args[1])
 }

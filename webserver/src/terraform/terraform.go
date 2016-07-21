@@ -1,150 +1,87 @@
+//package terraform provides functionality to launch a terraform command and retrieving its output
 package terraform
 
 import (
 	"bytes"
-	"io"
-	"os/exec"
-	"strings"
-	"time"
 	"encoding/json"
-	)
+	"log"
+	"os/exec"
+)
 
-
-type Deployment struct {
-	Status        string `json:"status"`
-	//Path          string `json:"path"`
-	Output        []byte `json:"output"`
-	buf           bytes.Buffer
-	outputChannel chan string
-	writeLock chan int
+//Command is the structure used to launch terraform commands
+type Command struct {
+	status string
+	output bytes.Buffer
+	error  bytes.Buffer
+	path   string
+	runner *exec.Cmd
 }
 
-func NewDeployment() *Deployment {
-	t := &Deployment{Status: ""}
-	//t.Path = path
-	t.outputChannel = make(chan string, 1)
-	t.writeLock = make(chan int, 1)
-   	return t
-
+//NewCommand returns a new command. The path determines the directory where commands are launched
+func NewCommand(path string) *Command {
+	d := &Command{path: path}
+	return d
 }
 
-func (t *Deployment) readOutput() {
-	tempOutput := ""
-	for {
-		temp := t.buf.String()
-		if !strings.Contains(tempOutput, temp) {
-			temp = strings.Replace(temp, tempOutput, "", -1)
-			tempOutput += temp
-			t.outputChannel <- temp
+//Launch starts a command in its own goroutine.
+func (d *Command) Launch(command string) []byte {
+	d.status = "Running"
+	go d.commandRunner(command)
 
-			if strings.Contains(temp, "Finished") {// MUST FIX WHEN TO STOP: SHOULD BE PUT HER
-				//t.Output = []byte(tempOutput)
-				t.Status = ""
-				temp = ""
-				return
-			}
-		}
-		
+	return []byte("{\"status:\": \"success\"}")
+}
+
+func (d *Command) GetStatusJSON() []byte {
+	type output struct {
+		Status string `json:"status"`
+		Output string `json:"output"`
+		Error  string `json:"error"`
 	}
 
-}
-
-func (t *Deployment) getOutput() {
-	out := ""
-	temp := ""
-
-	for{
-		select{
-			case out = <-t.outputChannel:
-				temp += out
-				t.Output = []byte(temp)
-				if strings.Contains(temp, "Finished") {
-					temp = ""
-					out = ""
-					return
-				}
-				out = ""
-			case <- t.writeLock:
-				<-t.writeLock
-				t.Output = []byte("")
-				temp = ""
-				out = ""
-			case <- time.After(30*time.Second):
-				return
-		}
+	o := output{
+		Status: d.status,
+		Output: d.output.String(),
+		Error:  d.error.String(),
 	}
+
+	oJSON, err := json.Marshal(o)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return oJSON
 }
 
-func (t *Deployment) TerraformCommand(command string, path string) {
+func (d *Command) commandRunner(command string) {
+	args := []string{command}
 
-	t.Status = "Running"
-	//t.getModules() // SHOULD BE PUT SOMEWHERE ELSE!!
-	t.buf.Reset()
+	if command == "plan" || command == "apply" || command == "destroy" {
+		args = append(args, "-input=false", "-no-color")
+	}
 
 	if command == "destroy" {
-		cmd := exec.Command("terraform", command, "-force")
-		cmd.Dir = path
-		stdout, _ := cmd.StdoutPipe()
-		stderr, _ := cmd.StderrPipe()
-		cmd.Start()
-
-		defer cmd.Wait()
-		go t.readOutput()
-		go t.getOutput()
-
-		io.Copy(&t.buf, stdout)
-		io.Copy(&t.buf, stderr)
-
-
-		t.buf.Write([]byte("\nFinished "))
-		return
+		args = append(args, "-force")
 	}
 
-	cmd := exec.Command("terraform", command)
-	cmd.Dir = path
-	stdout, _ := cmd.StdoutPipe()
-	stderr, _ := cmd.StderrPipe()
-	cmd.Start()
+	d.runner = exec.Command("terraform", args...)
+	d.runner.Dir = d.path
 
-	defer cmd.Wait()
-	go t.readOutput()
-	go t.getOutput()
-
-	io.Copy(&t.buf, stdout)
-	io.Copy(&t.buf, stderr)
-	t.buf.Write([]byte("Finished"))
-	//DELETE KEYS?????
-}
-
-func GetTerraformModules(path string) {
-
-	init := exec.Command("terraform", "get")
-	init.Dir = path
-	init.CombinedOutput()
-	
-}
-
-
-
-func (t *Deployment) GetDeploymentJSON() []byte {
-
-	type deploy struct {
-		Status         	string `json:"status"`
-		Output			string `json:"output"`
-
+	stdout, err := d.runner.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
 	}
-	d := new(deploy)
-	if t.Status == "Running"{
-		t.writeLock <- 1 //readlock
-		d.Status = t.Status
-		d.Output = string(t.Output)
-		t.writeLock <- 1
-	} else {
-		d.Status = t.Status
-		d.Output = string(t.Output)
-	}	
 
-	deploymentJSON, _ := json.Marshal(d)
+	stderr, err := d.runner.StderrPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return deploymentJSON
+	if err := d.runner.Start(); err != nil {
+		log.Fatal(err)
+	}
+	defer d.runner.Wait()
+
+	d.output.ReadFrom(stdout)
+	d.error.ReadFrom(stderr)
+	d.status = "Finished"
 }

@@ -13,6 +13,3 @@ fi
 if [ ! -d "${DIR}/${LIB_DIR}" ]; then
     git clone $LIB_GIT_URL ${DIR}/${LIB_DIR}
 fi
-
-export GOPATH=$DIR
-sudo -E go run main.go 80
