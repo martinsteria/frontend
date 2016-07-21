@@ -9,7 +9,7 @@ var module
 var moduleSource
 
 //API endpoints
-var apiRoot = "http://localhost/api"
+var apiRoot = "http://10.118.200.140/api"
 var libModulesAPIEndpoint = apiRoot + "/library"
 var usersAPIEndpoint = apiRoot + "/users"
 var deploymentAPIEndpoint = apiRoot + "/deploy"
