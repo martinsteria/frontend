@@ -5,7 +5,8 @@ import (
 	"api"
 	"library"
 	//"terraform"
-	"users"
+	"userbase"
+	"user"
 )
 
 const (
@@ -13,23 +14,29 @@ const (
 	libraryModulesDir = "/library/modules"
 )
 
-var lib *library.Library
+var library *user.User
+var userbase *userbase.Userbase
 
 //Init initializes the package. Must be called before anything else
 func Init(resourcesRootDir string) {
-	lib = library.NewLibrary(resourcesRootDir + libraryModulesDir)
-	users.Init(resourcesRootDir + usersRootDir)
+	userbase = userbase.NewUserbase(resourcesRootDir + usersRootDir)
+	library = user.NewUser(resourcesRootDir + libraryModulesDir)
+	users.Init()
 }
 
 //HandleUserRequests handles requests to the users endpoint
 func HandleUserRequests(r api.RequestData) []byte {
 	if r.Method == "GET" {
-		if user, present := r.Query["user"]; present {
-			if module, present := r.Query["module"]; present {
-				return users.GetLibrary(user).GetModuleDocumentationJSON(module)
+		if username, present := r.Query["user"]; present {
+			if moduleId, present := r.Query["module"]; present {
+				if user := userbase.GetUser(username); user != nil {
+					if module := user.GetModule(moduleId); module != nil {
+						return module.GetDocumentationJSON()
+					}
+				}
 			} else {
-				if lib := users.GetLibrary(user); lib != nil {
-					return lib.GetModuleListJSON()
+				if user := userbase.GetUser(username); user != nil {
+					return user.GetModuleListJSON()
 				}
 				return []byte("{\"status\": \"User not found\"}")
 			}
@@ -37,11 +44,11 @@ func HandleUserRequests(r api.RequestData) []byte {
 
 	} else if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
-			return users.AddUser(user)
+			return usersbase.AddUser(user)
 		}
 	}
 
-	return users.GetUserListJSON()
+	return userbase.GetUserListJSON()
 }
 
 //HandleLibraryRequests handles requests to the library endpoint
@@ -71,10 +78,11 @@ func HandleDeployRequests(r api.RequestData) []byte {
 	if r.Method == "POST" {
 		if user, present := r.Query["user"]; present {
 			if module, present := r.Query["module"]; present {
-				if users.GetDeployStruct(user).Status == "Running" {
-					return []byte("{\"status:\": \"Running\"}")
-				}
 				if command, present := r.Query["command"]; present {
+					if users.GetDeployStruct(user).Status == "Running" {
+						return []byte("{\"status:\": \"Running\"}")
+					}
+					users.GetUser(user).GetModule(module).Deploy(command)
 					deploy := users.GetDeployStruct(user)
 					users.GetLibrary(user).Modules[module].UpdateModule(r.Body)
 					go deploy.TerraformCommand(command, lib.GetRootDir()+"/"+user+"/"+module)

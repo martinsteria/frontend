@@ -1,4 +1,4 @@
-package doc
+package module
 
 import (
 	"bufio"
@@ -11,14 +11,14 @@ import (
 	"terraform"
 )
 
-type Variable struct {
+type variable struct {
 	Name         string `json:"name"`
 	Description  string `json:"description"`
 	DefaultValue string `json:"defaultValue"`
 	Value        string `json:"value"`
 }
 
-type Output struct {
+type outputs struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
@@ -30,19 +30,21 @@ type Module struct {
 	Description string               `json:"description"`
 	Provider    string               `json:"provider"`
 	Deployment  terraform.Deployment `json:"deployment"`
-	Variables   []Variable           `json:"variables"`
-	Outputs     []Output             `json:"outputs"`
+	Variables   []variable           `json:"variables"`
+	Outputs     []outputs             `json:"outputs"`
 }
 
 func NewModule(path string) *Module {
-	return &Module{Path: path}
+	m := &Module{Path: path}
+	m.BuildModule()
+	return m
 }
 
 func (m *Module) BuildModule() {
 	files, _ := ioutil.ReadDir(m.Path)
 
-	var variables []Variable
-	var outputs []Output
+	var variables []variable
+	var outputs []outputs
 	add := false
 	for _, f := range files {
 		if strings.Contains(f.Name(), ".tf") &&
@@ -78,7 +80,7 @@ func (m *Module) BuildModule() {
 					line = strings.Replace(line, "\"", "", -1)
 					line = strings.Trim(line, " { } ")
 
-					var temp_variable Variable
+					var temp_variable variable
 					temp_variable.Name = strings.TrimSpace(line)
 					for {
 						if strings.Contains(scanner.Text(), "}") {
@@ -98,7 +100,7 @@ func (m *Module) BuildModule() {
 					variables = append(variables, temp_variable)
 
 				} else if strings.Contains(line, "output") {
-					var temp_output Output
+					var temp_output outputs
 					line = strings.Replace(line, "output", "", -1)
 					line = strings.Trim(line, " { } ")
 					temp_output.Name = strings.TrimSpace(line)
@@ -166,7 +168,7 @@ func (m *Module) updateVariableValues() {
 func (m *Module) UpdateModule(varsJSON []byte) {
 	file, err := os.Create(m.Path + "/terraform.tfvars")
 
-	vars := make([]Variable, 5)
+	vars := make([]variable, 5)
 	json.Unmarshal(varsJSON, &vars)
 	fmt.Println(string(varsJSON))
 	fmt.Println(vars)
@@ -189,6 +191,31 @@ func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (m *Module) GetDocumentationJSON() []byte {
+	var moduleJSON []byte
+
+	type module struct {
+		Name        string         `json:"name"`
+		Id          string         `json:"id"`
+		Description string         `json:"description"`
+		Provider    string         `json:"provider"`
+		Variables   []variable `json:"variables"`
+		Outputs     []outputs   `json:"outputs"`
+	}
+
+	mInternal := module{
+		Name:        l.Modules[id].Name,
+		Id:          l.Modules[id].Id,
+		Description: l.Modules[id].Description,
+		Provider:    l.Modules[id].Provider,
+		Variables:   l.Modules[id].Variables,
+		Outputs:     l.Modules[id].Outputs,
+	}
+
+	mInternalJSON, _ = json.Marshal(mInternal)
+	return mInternalJSON
 }
 
 /*
