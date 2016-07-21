@@ -15,6 +15,7 @@ var usersAPIEndpoint = apiRoot + "/users"
 var deploymentAPIEndpoint = apiRoot + "/deploy"
 
 $(document).ready(function () {
+    $("#copyright").html("&copy; Sopra Steria " + new Date().getFullYear())
     $.ajaxSetup({ cache: false })
     $("#login-view").hide()
     $("#login-view").fadeIn("slow")
@@ -171,7 +172,6 @@ function showModule(path) {
 
 function showDeployment() {
     console.log("show deployment called")
-    $("#deploymentOutput").hide()
     $("#deployment-view").fadeIn("slow")
 
     $("#planBtn").unbind()
@@ -210,10 +210,12 @@ function deploy(command) {
         data: getParameters(),
         success: function(result) {
             showOutput()
+            $("#edit-view").fadeOut("slow", function() {
+                $("#output-view").fadeIn("slow")
+            })
         },
         dataType: "json"
     })
-    $("#deploymentOutput").fadeIn("slow")
 }
 
 /*Shows input from server*/
