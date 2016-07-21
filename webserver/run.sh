@@ -1,2 +1,3 @@
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export GOPATH=$DIR
-sudo -E go run main.go 80
+go run main.go 8080
