@@ -8,7 +8,6 @@ import (
 	"module"
 	"time"
 	"os"
-	"fmt"
 )
 
 //User contains information about a user
@@ -70,7 +69,6 @@ func (u *User) GetModule(id string) *module.Module {
 //AddModule copies a module from the main library to the user
 //If a user already has a copy, an error is returned
 func (u *User) AddModule(m *module.Module) []byte {
-	fmt.Println("DHAUDHA")
 	if _, present := u.Modules[m.Id]; present {
 		return []byte("\"status\": \"User module already exists\"")
 	}
