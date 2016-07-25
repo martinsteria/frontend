@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"os/exec"
+	"os"
 	"user"
 )
 
@@ -38,8 +38,7 @@ func (ub *Userbase) AddUser(name string) []byte {
 	if _, present := ub.Users[name]; present {
 		return []byte("{\"status\": \"User already exists\"}")
 	}
-
-	exec.Command("mkdir", rootDir).Output()
+	os.MkdirAll(rootDir, os.ModePerm)
 	ub.Users[name] = user.NewUser(rootDir)
 
 	return []byte("{\"status\": \"success\"}")
