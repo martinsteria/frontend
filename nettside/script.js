@@ -10,10 +10,10 @@ $(document).ready(function () {
     var moduleSource
 
     $("#copyright").html("&copy; Sopra Steria " + new Date().getFullYear())
-    $.ajaxSetup({ cache: false })
     $("#login-view").hide()
     $("#login-view").fadeIn("slow")
     $("#usernameInput").focus()
+
     $("#loginBtn").click(function () {
         user = $("#usernameInput").val()
         logIn(user,
@@ -24,7 +24,8 @@ $(document).ready(function () {
                   createNewUser(user)
               },
               function() {
-                  transition("#login-view", "#library-view")
+                  transition("#login-view", "#edit-view")
+                  show("#library-view")
                   var content = "<span>" + "Du er logget inn som " + user + "</span>"
                   $("#bruker").html(content)
                   $("#bruker").show()
@@ -72,6 +73,7 @@ $(document).ready(function () {
         transition("#output-view", "#edit-view")
     })
 
+    $("#edit-view").hide()
     $("#library-view").hide()
     $("#variables-view").hide()
     $("#deployment-view").hide()
