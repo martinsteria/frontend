@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"user"
+	"fmt"
 )
 
 type Userbase struct {
@@ -35,6 +36,7 @@ func NewUserbase(path string) *Userbase {
 //AddUser adds a new user to the userbase
 func (ub *Userbase) AddUser(name string) []byte {
 	rootDir := ub.RootDir + "/" + name
+	fmt.Println(rootDir)
 	if _, present := ub.Users[name]; present {
 		return []byte("{\"status\": \"User already exists\"}")
 	}

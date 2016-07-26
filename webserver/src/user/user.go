@@ -78,7 +78,7 @@ func (u *User) AddModule(m *module.Module) []byte {
 		time.Sleep(10 * time.Millisecond)
 	}
 	//exec.Command("cp", "-r", m.Path, u.RootDir).Output()
-	copyDirectory(m.Path, u.RootDir)
+	copyDirectory(m.Path, u.RootDir + "/" + m.Id)
 
 	u.Modules[m.Id] = module.NewModule(u.RootDir + "/" + m.Id)
 	return []byte("{\"status\": \"success\"}")
