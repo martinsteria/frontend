@@ -86,12 +86,21 @@ $(document).ready(function () {
     })
 })
 
+/**
+ * Transitions from one view to the other
+ * from {string} - View to transition out from. Uses jquery-notation
+ * to {string} - View to transition in to. Uses jquery-notation
+ */
 function transition(from, to) {
     $(from).fadeOut("slow", function() {
         $(to).fadeIn("slow")
     })
 }
 
+/**
+ * Makes a view visible on the webpage. Uses jquery-notation
+ * view {string} - View to show
+ */
 function show(view) {
     $(view).fadeIn("slow")
 }
@@ -232,7 +241,7 @@ function getModule(path) {
 }
 
 /**
- * Shows #deployment-view. Binds the deploy function to buttons plan, apply and destroy
+ * Shows #deployment-view.
  */
 function showDeployment() {
   $("#deployment-view").fadeIn("slow")
@@ -246,14 +255,40 @@ function showDeployment() {
  * @param {string} command - The command to execute
  */
 function deploy(user, module, command) {
-    var url =
-        $.post({
-            url: DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module + "&command=" + command,
-            success: function(result) {
-                getOutput(user, module)
-            },
-            dataType: "json"
+    var getOutput = function(user, module) {
+            $.getJSON(DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module, function(result) {
+            $("#deploymentOutput").html(result.output)
+            $("#deploymentError").html(result.error)
+            if (result.status == "Running") {
+                setTimeout(
+                    function() {
+                        getOutput(user, module)
+                    },
+                    1000)
+            }
         })
+    }
+
+    var parseParameters = function() {
+        var table = document.getElementById("moduleVariables")
+        var variables = []
+        for (var i = 1, row; row = table.rows[i]; i++) {
+            variables.push({
+                name: row.cells[0].childNodes[0].innerHTML,
+                value: row.cells[1].childNodes[0].value
+            })
+        }
+	      return JSON.stringify(variables)
+    }
+
+    $.post({
+        url: DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module + "&command=" + command,
+        data: parseParameters(),
+        success: function(result) {
+            getOutput(user, module)
+        },
+        dataType: "json"
+    })
 }
 
 function copyModule(user, module) {
@@ -263,41 +298,4 @@ function copyModule(user, module) {
             getUserModules(user)
         }
     })
-}
-
-/**
- * Reads the current output of the previously ran command from the server and fills in #output-view.
- * Recursively calls itself until the command is finished.
- * @param {string} user - The user that ran the command
- * @param {string} module - The module that was deployed
- */
-function getOutput(user, module) {
-    var url = DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module
-    $.getJSON(url, function(result) {
-      $("#deploymentOutput").html(result.output)
-        $("#deploymentError").html(result.error)
-        if (result.status == "Running") {
-            setTimeout(
-                function() {
-                    getOutput(user, module)
-                },
-                1000)
-        }
-    })
-}
-
-/**
- * Returns the variables filled in by the user in the #moduleVariables table
- * @return {string} A stringified JSON representation of the table with fields "name" and "value"
- */
-function parseParameters() {
-    var table = document.getElementById("moduleVariables")
-    var variables = []
-    for (var i = 1, row; row = table.rows[i]; i++) {
-        variables.push({
-            name: row.cells[0].childNodes[0].innerHTML,
-            value: row.cells[1].childNodes[0].value
-        })
-    }
-	  return JSON.stringify(variables)
 }
