@@ -90,7 +90,7 @@ func HandleDeployRequests(r api.RequestData) []byte {
 				if command, present := r.Query["command"]; present {
 					if user := users.GetUser(username); user != nil {
 						if module := user.GetModule(moduleId); module != nil {
-							module.UpdateModule(r.Body)
+							module.Update(r.Body)
 							return module.GetCommand().Launch(command)
 						}
 					}

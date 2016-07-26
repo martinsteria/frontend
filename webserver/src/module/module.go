@@ -141,7 +141,6 @@ func (m *Module) build() {
 	m.Outputs = outputs
 }
 
-//TODO: Integrate with buildmodule
 func (m *Module) updateVariableValues() {
 	files, _ := ioutil.ReadDir(m.Path)
 
@@ -170,8 +169,8 @@ func (m *Module) updateVariableValues() {
 }
 
 //UpdateModule updates a module to include the terraform.tfvars file.
-//The argument should be supplied as a JSON list containing object with atleast a field "name" and a field "value"
-func (m *Module) UpdateModule(varsJSON []byte) {
+//The argument should be supplied as a JSON list containing objects with atleast a field "name" and a field "value"
+func (m *Module) Update(varsJSON []byte) {
 	file, err := os.Create(m.Path + "/terraform.tfvars")
 
 	vars := make([]variable, 5)

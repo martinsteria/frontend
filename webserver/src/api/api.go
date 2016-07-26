@@ -1,5 +1,5 @@
 //Package api provides primitives for attaching response functions to http requests.
-//All responses use the JSON format
+//All responses use the JSON format.
 package api
 
 import (

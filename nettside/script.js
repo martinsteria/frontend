@@ -1,26 +1,77 @@
-﻿//The current user operating the website
-var user
-
-//The current module the user is editing
-var module
-
-//Is the module from the library or from the users collection
-//VALS: "USER" or "LIB"
-var moduleSource
-
-//API endpoints
+﻿//API endpoints
 var apiRoot = "http://10.118.200.140:8080/api"
-var libModulesAPIEndpoint = apiRoot + "/library"
-var usersAPIEndpoint = apiRoot + "/users"
-var deploymentAPIEndpoint = apiRoot + "/deploy"
+var LIBRARY_ENDPOINT = apiRoot + "/library"
+var USERS_ENDPOINT = apiRoot + "/users"
+var DEPLOY_ENDPOINT = apiRoot + "/deploy"
 
 $(document).ready(function () {
+    var user
+    var module
+    var moduleSource
+
     $("#copyright").html("&copy; Sopra Steria " + new Date().getFullYear())
     $.ajaxSetup({ cache: false })
     $("#login-view").hide()
     $("#login-view").fadeIn("slow")
-    $("#usernameInput").focus();
-    $("#loginBtn").click(logIn)
+    $("#usernameInput").focus()
+    $("#loginBtn").click(function () {
+        user = $("#usernameInput").val()
+        logIn(user,
+              function() {
+                  getUserModules(user)
+              },
+              function() {
+                  createNewUser(user)
+              },
+              function() {
+                  transition("#login-view", "#library-view")
+                  var content = "<span>" + "Du er logget inn som " + user + "</span>"
+                  $("#bruker").html(content)
+                  $("#bruker").show()
+                  getLibraryModules()
+              })
+    })
+
+    $("#library").change(function() {
+        module = $("#library option:selected").attr("id")
+        moduleSource = "LIB"
+        getModule(LIBRARY_ENDPOINT +"?module=" + module)
+        show("#variables-view")
+    })
+
+    $("#userLibrary").change(function () {
+        module = $("#userLibrary option:selected").attr("id")
+        moduleSource = "USER"
+        getModule(USERS_ENDPOINT + "?user=" + user +  "&module=" + module)
+        show("#variables-view")
+    })
+
+    $("#showDeployment").click(function() {
+        if (moduleSource == "LIB") {
+            copyModule(user, module)
+        }
+        show("#deployment-view")
+    })
+
+    $("#planBtn").click(function() {
+        deploy(user, module, "plan")
+        transition("#edit-view", "#output-view")
+    })
+
+    $("#applyBtn").click(function() {
+        deploy(user, module, "apply")
+        transition("#edit-view", "#output-view")
+    })
+
+    $("#destroyBtn").click(function() {
+        deploy(user, module, "destroy")
+        transition("#edit-view", "#output-view")
+    })
+
+    $("#backButton").click(function() {
+        transition("#output-view", "#edit-view")
+    })
+
     $("#library-view").hide()
     $("#variables-view").hide()
     $("#deployment-view").hide()
@@ -31,62 +82,80 @@ $(document).ready(function () {
     //"logg inn" knapp aktiveres ved å trykke enter i inputbox
     $('#usernameInput').keypress(function (e) {
         if (e.keyCode == 13)
-            $('#loginBtn').click();
-    });
+            $('#loginBtn').click()
+    })
 })
 
-/*Checks wether the user exist by getting a list of all users from the server and comparing them with the entered username.
-If the user exist it calls importUserModules(), if not it calls createNewUser()*/
-
-function logIn() {
-    user = $("#usernameInput").val()
-	  $.get({
-		    url: usersAPIEndpoint, //Get-request to server for url= ../api/users
-		    success: function(result) {
-			      var e = false;
-            if (result == null) {
-                createNewUser(user)
-                return
-            }
-			      for (i=0; i< result.length ; i++) { // for all usernames check if it equals the enteres username
-				        if (user == result[i]){
-					          e = true;
-				        }
-			      }
-			      if (e == true) {
-			          importUserModules(usersAPIEndpoint, user);
-			      }
-			      else {
-				        createNewUser(user);
-			      }
-		    }
-	  })
-    $("#login-view").fadeOut("slow", function() {
-        importLibraryModules(libModulesAPIEndpoint)
-        $("#library-view").fadeIn("slow")
+function transition(from, to) {
+    $(from).fadeOut("slow", function() {
+        $(to).fadeIn("slow")
     })
-    var content = "<span>" + "Du er logget inn som " + user + "" + "</span>";
-    $("#bruker").html(content)
-    $("#bruker").show()
 }
 
-/* sends a post request to the server with the entered username*/
+function show(view) {
+    $(view).fadeIn("slow")
+}
+
+/**
+ * Logs the user in with the provided username.
+ * If the user does not exist on the server, a new user is created.
+ * Fades out the login-view and fades in the library-view
+ * Fetches all library modules as well as the users library modules
+ * @param {string} user - The name of the user to log in
+ * @param {function()} success - Function to call if user exists
+ * @param {function()} failure - Function to call if user does not exist
+ * @param {function()} regardless - Function to call regardless of user existing or not
+ */
+function logIn(user, success, failure, regardless) {
+	  $.get({
+		    url: USERS_ENDPOINT,
+		    success: function(result) {
+            if (result == null) {
+                failure()
+                regardless()
+                return
+            }
+
+			      var exists = false
+			      for (i=0; i< result.length ; i++) {
+				        if (user == result[i]){
+					          exists = true
+                    break
+				        }
+			      }
+			      if (exists == true) {
+                success()
+                regardless()
+                return
+			      }
+            failure()
+            regardless()
+		    }
+    })
+}
+
+/**
+ * Creates a new user on the server
+ * @param {string} user - The name of the user to create
+ */
 function createNewUser(user) {
     $.post({
-        url: usersAPIEndpoint + "?user=" + user,
+        url: USERS_ENDPOINT + "?user=" + user,
         success: function (result) {
-            var content= "<span>" + "Ny Bruker" + "</span><br>" + "Ny bruker opprettet for "+ user;
+            var content= "<span>" + "Ny Bruker" + "</span><br>" + "Ny bruker opprettet for "+ user
             $("#newUser").html(content)
             $("#newUser").show()
         }
     })
 }
 
-/*Sends a get-request for a JSON-file containing all available modules. Enteres the available modules to #library*/
-function importLibraryModules(path) {
-    $.getJSON(path, function (resultModules) {
-        console.log(resultModules)
-        var content = ""
+/**
+ * Fetches all library modules from server and displays them in the #library dropdown.
+ * Also binds changes to the dropdown to show #variables-view
+ */
+function getLibraryModules() {
+    $.getJSON(LIBRARY_ENDPOINT, function (resultModules) {
+      var content = ""
         if (resultModules != null){
             content += "<option selected disabled hidden>Biblioteksmoduler...</option>"
             for (i = 0; i < resultModules.length; i++) {
@@ -94,22 +163,19 @@ function importLibraryModules(path) {
                     content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].provider + ": " + resultModules[i].name + "</option>"
                 }
             }
-            $("#library").html(content);
-            $("#library").unbind()
-            $("#library").change(function() {
-                module = $("#library option:selected").attr("id")
-                moduleSource = "LIB"
-                showModule(path +"?module=" + module)
-                $("#variables-view").fadeIn("slow")
-            })
+            $("#library").html(content)
         }
-    });
+    })
 }
 
-/*Sends a get-request for a JSON-file containing the modules for this user. Enteres the available modules to #userLibrary*/
-function importUserModules(path, user) {
-    $.getJSON(path + "?user=" + user, function (resultModules) {
-        var content = ""
+/**
+ * Fetches all the user's modules from server and displays them in the #userLibrary dropdown.
+ * Also binds changes to the dropdown to show #variables-view
+ * @param {string} user - The user to fetch modules for
+ */
+function getUserModules(user) {
+  $.getJSON(USERS_ENDPOINT + "?user=" + user, function (resultModules) {
+      var content = ""
         content += "<option selected disabled hidden>Brukermoduler...</option>"
         if (resultModules == null) {
             return
@@ -117,22 +183,17 @@ function importUserModules(path, user) {
         for (i = 0; i < resultModules.length; i++) {
             content += "<option value=\"" + i + "\" id=\"" + resultModules[i].id + "\" >" + resultModules[i].provider + ": " + resultModules[i].name + "</option>"
         }
-
-        $("#userLibrary").html(content);
-        $("#userLibrary").change(function () {
-            module = $("#userLibrary option:selected").attr("id")
-            moduleSource = "USER"
-            showModule(path + "?user=" + user +  "&module=" + module)
-            $("#variables-view").fadeIn("slow")
-        })
-    });
+        $("#userLibrary").html(content)
+    })
 }
 
 
-/* Sends a get request for a JSON-file containing the variables for the selected module. Adds each variables to the table #moduleVariables*/
-function showModule(path) {
-    console.log("Show module called")
-    $.getJSON(path, function(result) {
+/**
+ * Fetches a module's documentation from the server and fills #variables-view with the information
+ * @param {string} path - The API path for a module
+ */
+function getModule(path) {
+  $.getJSON(path, function(result) {
         var content = "2. "
         var name = result.name
         $("#moduleName").html(result.name)
@@ -159,111 +220,78 @@ function showModule(path) {
                 value = result.variables[i].default
             }
 
-            var textInputBox = '<input type="text" class="form-control" value="' + value + '" />';
+            var textInputBox = '<input type="text" class="form-control" value="' + value + '" />'
             content += '<tr>'
             content += '<td><a href="#" data-placement="left" data-toggle="tooltip" title="' + result.variables[i].description + '">' + result.variables[i].name + '</a></td>'
             content += '<td>' + textInputBox + '</td>'
             content += '</tr>'
         }
         $("#moduleVariables").html(content)
-        $("#showDeployment").unbind()
-        $("#showDeployment").click(showDeployment)
-        $("[data-toggle=\"tooltip\"]").tooltip();
-    });
+        $("[data-toggle=\"tooltip\"]").tooltip()
+    })
 }
 
-/* Shows deployment-view. Defines method to call for the buttons "planBtn", "applyBtn" and "destroyBtn".*/
-
+/**
+ * Shows #deployment-view. Binds the deploy function to buttons plan, apply and destroy
+ */
 function showDeployment() {
-    console.log("show deployment called")
-    $("#deployment-view").fadeIn("slow")
-
-    $("#planBtn").unbind()
-    $("#planBtn").click(function() {
-        deploy("plan")
-    })
-
-    $("#applyBtn").unbind()
-    $("#applyBtn").click(function() {
-        deploy("apply")
-    })
-
-    $("#destroyBtn").unbind()
-    $("#destroyBtn").click(function() {
-        deploy("destroy")
-    })
+  $("#deployment-view").fadeIn("slow")
 }
 
-
-/* Post-request to server containing the command triggered by either "planBtn", "applyBtn" or "destroyBtn"*/
-
-function deploy(command) {
-    console.log("deploy called")
-    if (moduleSource == "LIB") {
+/**
+ * Requests the server to execute a terraform command.
+ * Also shows #output-view and incrementally fills it with the output from the server
+ * @param {string} user - The user that should execute the command
+ * @param {string} module - The module to deploy
+ * @param {string} command - The command to execute
+ */
+function deploy(user, module, command) {
+    var url =
         $.post({
-            url: libModulesAPIEndpoint + "/copy?" + "user=" + user + "&module=" + module,
+            url: DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module + "&command=" + command,
             success: function(result) {
-                importUserModules(usersAPIEndpoint, user)
-                var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module + "&command=" + command
-                $.post({
-                    url: url,
-                    data: getParameters(),
-                    success: function(result) {
-                        showOutput()
-                        $("#edit-view").fadeOut("slow", function() {
-                            $("#output-view").fadeIn("slow")
-                            $("#backButton").unbind()
-                            $("#backButton").click(function() {
-                                $("#output-view").fadeOut("slow", function () {
-                                    $("#edit-view").fadeIn("slow")
-                                })
-                            })
-                        })
-                    },
-                    dataType: "json"
-                })
-            }
-        })
-    } else {
-
-        var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module + "&command=" + command
-        $.post({
-            url: url,
-            data: getParameters(),
-            success: function(result) {
-                showOutput()
-                $("#edit-view").fadeOut("slow", function() {
-                    $("#output-view").fadeIn("slow")
-                    $("#backButton").unbind()
-                    $("#backButton").click(function() {
-                        $("#output-view").fadeOut("slow", function () {
-                            $("#edit-view").fadeIn("slow")
-                        })
-                    })
-                })
+                getOutput(user, module)
             },
             dataType: "json"
         })
-    }
 }
 
-/*Shows input from server*/
-function showOutput() {
-    var url = deploymentAPIEndpoint + "?user=" + user + "&module=" + module
+function copyModule(user, module) {
+    $.post({
+        url: LIBRARY_ENDPOINT + "/copy?" + "user=" + user + "&module=" + module,
+        success: function(result) {
+            getUserModules(user)
+        }
+    })
+}
+
+/**
+ * Reads the current output of the previously ran command from the server and fills in #output-view.
+ * Recursively calls itself until the command is finished.
+ * @param {string} user - The user that ran the command
+ * @param {string} module - The module that was deployed
+ */
+function getOutput(user, module) {
+    var url = DEPLOY_ENDPOINT + "?user=" + user + "&module=" + module
     $.getJSON(url, function(result) {
-        console.log(result)
-        $("#deploymentOutput").html(result.output)
+      $("#deploymentOutput").html(result.output)
         $("#deploymentError").html(result.error)
         if (result.status == "Running") {
-            setTimeout(showOutput, 1000)
+            setTimeout(
+                function() {
+                    getOutput(user, module)
+                },
+                1000)
         }
-
-    });
+    })
 }
 
-/*wraps entered variables in a JSON-file*/
-function getParameters() {
-    var table = document.getElementById("moduleVariables");
+/**
+ * Returns the variables filled in by the user in the #moduleVariables table
+ * @return {string} A stringified JSON representation of the table with fields "name" and "value"
+ */
+function parseParameters() {
+    var table = document.getElementById("moduleVariables")
     var variables = []
     for (var i = 1, row; row = table.rows[i]; i++) {
         variables.push({

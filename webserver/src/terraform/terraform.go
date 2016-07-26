@@ -25,7 +25,7 @@ func NewCommand(path string) *Command {
 	return d
 }
 
-//Launch starts a command in its own goroutine. Returns status success on the JSON format
+//Launch starts a command in its own goroutine. If a command is already running, it fails.
 func (d *Command) Launch(command string) []byte {
 	if d.status == "Running" {
 		return []byte("{\"status:\": \"failure: busy\"}")
@@ -40,6 +40,7 @@ func (d *Command) Launch(command string) []byte {
 	return []byte("{\"status:\": \"success\"}")
 }
 
+//IsRunning returns whether a command is currently running or not
 func (d *Command) IsRunning() bool {
 	if d.status == "Running" {
 		return true
