@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"module"
-	"os/exec"
 	"time"
+	"os"
 )
 
 //User contains information about a user
@@ -77,7 +77,41 @@ func (u *User) AddModule(m *module.Module) []byte {
 	for m.GetCommand().IsRunning() {
 		time.Sleep(10 * time.Millisecond)
 	}
-	exec.Command("cp", "-r", m.Path, u.RootDir).Output()
+	//exec.Command("cp", "-r", m.Path, u.RootDir).Output()
+	copyDirectory(m.Path, u.RootDir + "/" + m.Id)
+
 	u.Modules[m.Id] = module.NewModule(u.RootDir + "/" + m.Id)
 	return []byte("{\"status\": \"success\"}")
+}
+
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func copyDirectory(from string, to string) {
+
+	var dir []string
+	files, err := ioutil.ReadDir(from)
+	checkError(err)
+
+	err = os.MkdirAll(to, os.ModePerm)
+	checkError(err)
+
+	checkError(err)
+	for _, f := range files {
+		checkError(err)
+		if(f.IsDir() ){
+			dir = append(dir, f.Name())
+		} else {
+			content, err := ioutil.ReadFile(from +"/"+ f.Name())
+			checkError(err)
+			os.Chdir(to)
+			ioutil.WriteFile(f.Name(), content, os.ModePerm)
+		}		
+	}
+	for d := range dir {
+		copyDirectory(from + "/" + dir[d], to + "/" + dir[d])
+	}
 }

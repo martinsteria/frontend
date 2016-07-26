@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"os/exec"
+	"os"
 	"user"
+	"fmt"
 )
 
 type Userbase struct {
@@ -35,11 +36,11 @@ func NewUserbase(path string) *Userbase {
 //AddUser adds a new user to the userbase
 func (ub *Userbase) AddUser(name string) []byte {
 	rootDir := ub.RootDir + "/" + name
+	fmt.Println(rootDir)
 	if _, present := ub.Users[name]; present {
 		return []byte("{\"status\": \"User already exists\"}")
 	}
-
-	exec.Command("mkdir", rootDir).Output()
+	os.MkdirAll(rootDir, os.ModePerm)
 	ub.Users[name] = user.NewUser(rootDir)
 
 	return []byte("{\"status\": \"success\"}")

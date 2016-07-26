@@ -155,8 +155,10 @@ func (m *Module) updateVariableValues() {
 				for i := 0; i < len(m.Variables); i++ {
 					if strings.Contains(line, m.Variables[i].Name) {
 						line = strings.Replace(line, "\"", "", -1)
-						line = strings.Replace(line, m.Variables[i].Name, "", -1)
-						line = strings.Replace(line, "=", "", -1)
+						l := strings.SplitAfter(line, "=")
+						line = strings.TrimSpace(l[len(l)-1])
+						//line = strings.Replace(line, m.Variables[i].Name, "", -1)
+						//line = strings.Replace(line, "=", "", -1)
 						m.Variables[i].Value = strings.TrimSpace(line)
 					}
 				}
